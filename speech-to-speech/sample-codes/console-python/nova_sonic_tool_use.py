@@ -552,7 +552,7 @@ class BedrockStreamManager:
             pst_date = datetime.datetime.now(pst_timezone)
             
             return {
-                "formattedTime": pst_time.strftime("%I:%M %p"),
+                "formattedTime": pst_date.strftime("%I:%M %p"),
                 "date": pst_date.strftime("%Y-%m-%d"),
                 "year": pst_date.year,
                 "month": pst_date.month,
