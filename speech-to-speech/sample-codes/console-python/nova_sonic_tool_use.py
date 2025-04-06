@@ -583,7 +583,7 @@ class BedrockStreamManager:
             
             # Create deterministic randomness based on order ID
             # This ensures the same order ID always returns the same status
-            seed = int(hashlib.md5(order_id.encode()).hexdigest(), 16) % 10000
+            seed = int(hashlib.md5(order_id.encode(), usedforsecurity=False).hexdigest(), 16) % 10000
             random.seed(seed)
             
             # Possible statuses with appropriate weights
@@ -605,31 +605,50 @@ class BedrockStreamManager:
             
             # Generate a realistic estimated delivery date
             today = datetime.datetime.now()
-            delivery_days = random.randint(1, 10)
-            estimated_delivery = (today + datetime.timedelta(days=delivery_days)).strftime("%Y-%m-%d")
-            
-            # Generate last update timestamp
-            hours_ago = random.randint(0, 48)
-            last_update = (today - datetime.timedelta(hours=hours_ago)).strftime("%Y-%m-%d %H:%M:%S")
-            
+            # Handle estimated delivery date based on status
+            if status == "Delivered":
+                # For delivered items, delivery date is in the past
+                delivery_days = -random.randint(0, 3)
+                estimated_delivery = (today + datetime.timedelta(days=delivery_days)).strftime("%Y-%m-%d")
+            elif status == "Out for delivery":
+                # For out for delivery, delivery is today
+                estimated_delivery = today.strftime("%Y-%m-%d")
+            else:
+                # For other statuses, delivery is in the future
+                delivery_days = random.randint(1, 10)
+                estimated_delivery = (today + datetime.timedelta(days=delivery_days)).strftime("%Y-%m-%d")
+
             # Handle notification request if enabled
             notification_message = ""
-            if request_notifications:
+            if request_notifications and status != "Delivered":
                 notification_message = f"You will receive notifications for order {order_id}"
 
-            
             # Return comprehensive tracking information
-            return {
+            tracking_info = {
                 "orderStatus": status,
                 "orderNumber": order_id,
-                "estimatedDelivery": estimated_delivery,
-                "lastUpdate": last_update,
-                "currentLocation": "Distribution Center" if status == "In transit" else "",
-                "notificationStatus": notification_message,
-                "additionalInfo": "Weather delays possible" if status == "Delayed" else ""
+                "notificationStatus": notification_message
             }
 
-        return {}
+            # Add appropriate fields based on status
+            if status == "Delivered":
+                tracking_info["deliveredOn"] = estimated_delivery
+            elif status == "Out for delivery":
+                tracking_info["expectedDelivery"] = "Today"
+            else:
+                tracking_info["estimatedDelivery"] = estimated_delivery
+
+            # Add location information based on status
+            if status == "In transit":
+                tracking_info["currentLocation"] = "Distribution Center"
+            elif status == "Delivered":
+                tracking_info["deliveryLocation"] = "Front Door"
+                
+            # Add additional info for delayed status
+            if status == "Delayed":
+                tracking_info["additionalInfo"] = "Weather delays possible"
+                
+            return tracking_info
     
     async def close(self):
         """Close the stream properly."""
