@@ -25,7 +25,7 @@ public class InputEventsInteractObserver implements InteractObserver<String> {
 
     @Override
     public void onNext(String msg) {
-        //log.info("publishing message {}", msg);
+        log.info("publishing message {}", msg);
         this.subscriber.onNext(inputBuilder(msg));
     }
 

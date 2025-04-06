@@ -147,9 +147,9 @@ public class OutputEventsInteractObserver implements InteractObserver<String> {
     }
 
     private void handleAudioOutput(JsonNode node) {
-       // log.info("Audio output for node: {}", node);
+        log.info("Audio output for node: {}", node);
         String content = node.get("content").asText();
-       // log.info("Received audio output {} from {}", content, role.get());
+        log.info("Received audio output {} from {}", content, role.get());
     }
 
     private void handleToolUse(JsonNode node) {

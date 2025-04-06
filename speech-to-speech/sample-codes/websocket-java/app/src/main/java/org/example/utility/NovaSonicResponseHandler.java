@@ -34,7 +34,7 @@ public class NovaSonicResponseHandler implements InvokeModelWithBidirectionalStr
                 log.info("Nova Sonic chunk received, converting to payload");
                 String payloadString =
                         StandardCharsets.UTF_8.decode((event.bytes().asByteBuffer().rewind().duplicate())).toString();
-                //log.info("Nova Sonic payload: {}", payloadString);
+                log.info("Nova Sonic payload: {}", payloadString);
                     delegate.onNext(payloadString);
             }
         }));
