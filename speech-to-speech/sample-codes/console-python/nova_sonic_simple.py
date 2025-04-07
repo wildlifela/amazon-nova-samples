@@ -4,7 +4,7 @@ import base64
 import json
 import uuid
 import pyaudio
-from aws_sdk_bedrock_runtime.client import BedrockRuntime, InvokeModelWithBidirectionalStreamOperationInput
+from aws_sdk_bedrock_runtime.client import BedrockRuntimeClient, InvokeModelWithBidirectionalStreamOperationInput
 from aws_sdk_bedrock_runtime.models import InvokeModelWithBidirectionalStreamInputChunk, BidirectionalInputPayloadPart
 from aws_sdk_bedrock_runtime.config import Config, HTTPAuthSchemeResolver, SigV4AuthScheme
 from smithy_aws_core.credentials_resolvers.environment import EnvironmentCredentialsResolver
@@ -40,7 +40,7 @@ class SimpleNovaSonic:
             http_auth_scheme_resolver=HTTPAuthSchemeResolver(),
             http_auth_schemes={"aws.auth#sigv4": SigV4AuthScheme()}
         )
-        self.client = BedrockRuntime(config=config)
+        self.client = BedrockRuntimeClient(config=config)
     
     async def send_event(self, event_json):
         """Send an event to the stream."""

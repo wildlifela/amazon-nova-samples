@@ -31,25 +31,7 @@ This repository includes three different implementations of the Nova Sonic model
 
 ## Installation
 
-1. Extract the AWS SDK Bedrock experimental package and install the wheel files:
-
-You can use either the tarball (.tar.gz) or zip file (.zip) based on your preference:
-
-**Option A: Using the tarball**
-```bash
-# Extract the AWS SDK Bedrock experimental tarball
-cd sdk
-tar -xzf aws_sdk_bedrock_experimental.tar.gz
-```
-
-**Option B: Using the zip file**
-```bash
-# Extract the AWS SDK Bedrock experimental zip file
-cd sdk
-unzip aws_sdk_bedrock_experimental.zip
-```
-
-2. Install all dependencies:
+1. Install all dependencies:
 
 First go the root folder where you have your requirements.txt file then run:
 
@@ -57,7 +39,7 @@ First go the root folder where you have your requirements.txt file then run:
 python -m pip install -r requirements.txt
 ```
 
-3. Configure AWS credentials:
+2. Configure AWS credentials:
 
 The application uses environment variables for AWS authentication. Set these before running the application:
 

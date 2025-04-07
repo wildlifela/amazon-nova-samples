@@ -11,7 +11,7 @@ import hashlib
 import datetime
 import time
 import inspect
-from aws_sdk_bedrock_runtime.client import BedrockRuntime, InvokeModelWithBidirectionalStreamOperationInput
+from aws_sdk_bedrock_runtime.client import BedrockRuntimeClient, InvokeModelWithBidirectionalStreamOperationInput
 from aws_sdk_bedrock_runtime.models import InvokeModelWithBidirectionalStreamInputChunk, BidirectionalInputPayloadPart
 from aws_sdk_bedrock_runtime.config import Config, HTTPAuthSchemeResolver, SigV4AuthScheme
 from smithy_aws_core.credentials_resolvers.environment import EnvironmentCredentialsResolver
@@ -296,7 +296,7 @@ class BedrockStreamManager:
             http_auth_scheme_resolver=HTTPAuthSchemeResolver(),
             http_auth_schemes={"aws.auth#sigv4": SigV4AuthScheme()}
         )
-        self.bedrock_client = BedrockRuntime(config=config)
+        self.bedrock_client = BedrockRuntimeClient(config=config)
     
     async def initialize_stream(self):
         """Initialize the bidirectional stream with Bedrock."""
