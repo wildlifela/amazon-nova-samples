@@ -1,0 +1,216 @@
+# Nova Sonic TypeScript Example: Real-time Audio Streaming with AWS Bedrock Integration
+
+This project implements a bidirectional WebSocket-based audio streaming application that integrates with Amazon Nova Sonic model for real-time speech-to-speech conversion. The application enables natural conversational interactions through a web interface while leveraging Amazon's new powerful Nova Sonic model for processing and generating responses.
+
+The system consists of a server that handles the bidirectional streaming and AWS Bedrock integration, paired with a modern web client that manages audio streaming and user interactions. Key features include real-time audio streaming, integration with Amazon Nova Sonic model, bidirectional communication handling, and a responsive web interface with chat history management. It supports also command-line interface to run an interaction with a recorded audio.
+
+This implementation also includes integration with Amazon Bedrock Knowledge Base, allowing the Nova Sonic model to retrieve information from a knowledge base containing company benefit policies. This enables the model to provide accurate and contextual responses to questions about employee benefits.
+
+## Repository Structure
+```
+.
+├── public/                 # Frontend web application files
+│   ├── index.html          # Main application entry point
+│   └── src/                # Frontend source code
+│       ├── lib/            # Core frontend libraries
+│       │   ├── play/       # Audio playback components
+│       │   └── util/       # Utility functions and managers
+│       ├── main.js         # Main application logic
+│       └── style.css       # Application styling
+├── src/                    # TypeScript source files
+│   ├── client.ts           # AWS Bedrock client implementation
+│   ├── bedrock-kb-client.ts # AWS Bedrock Knowledge Base client implementation
+│   ├── server.ts           # Express server implementation
+│   ├── consts.ts           # Constants including tool schemas and configurations
+│   └── types.ts            # TypeScript type definitions
+├── kb/                     # Knowledge Base source files
+│   └── Aglaia_Benefit_Policy.pdf # Sample benefit policy document for KB
+└── tsconfig.json           # TypeScript configuration
+```
+
+## Usage Instructions
+### Prerequisites
+- Node.js (v14 or higher)
+- AWS Account with Bedrock access
+- AWS CLI configured with appropriate credentials
+- Modern web browser with WebAudio API support
+
+### Important: SDK Package Installation
+Since the AWS Bedrock SDK is experimental, you'll need to download and install the packages manually:
+
+1. Download the AWS SDK packages from the AWS SDK repository
+2. Install the following packages:
+   - @aws-sdk/client-bedrock-runtime
+   - @aws-sdk/credential-providers 
+   - @aws-sdk/node-http-handler
+   - @smithy/node-http-handler
+   - @smithy/types
+
+Note: The exact versions and paths will depend on your SDK installation. Make sure to use compatible versions.
+
+Required packages:
+> **Note:** Please update the SDK paths in `package.json` according to your local environment.
+
+```json
+{
+  "dependencies": {
+    "@aws-sdk/client-bedrock-runtime": "file:/Volumes/workplace/github/JSSDK/JsSdkV3/clients/client-bedrock-runtime",
+    "@aws-sdk/credential-providers": "file:/Volumes/workplace/github/JSSDK/JsSdkV3/packages/credential-providers",
+    "@aws-sdk/node-http-handler": "file:/Volumes/workplace/github/JSSDK/JsSdkV3/deprecated/packages/node-http-handler",
+    "@smithy/node-http-handler": "^4.0.3",
+    "@smithy/types": "^4.1.0",
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.13.9",
+    "dotenv": "^16.3.1",
+    "express": "^4.21.2",
+    "pnpm": "^10.6.1",
+    "rxjs": "^7.8.2",
+    "socket.io": "^4.8.1",
+    "ts-node": "^10.9.2",
+    "uuid": "^11.1.0"
+  }
+}
+```
+
+### Installation
+1. Clone the repository:
+```bash
+git clone <repository-url>
+cd <repository-name>
+```
+
+2. Install dependencies:
+```bash
+npm install
+```
+
+3. Configure AWS credentials:
+```bash
+# Configure AWS CLI with your credentials
+aws configure --profile bedrock-test
+```
+
+4. Build the TypeScript code:
+```bash
+npm run build
+```
+
+### Quick Start
+1. Start the server:
+```bash
+npm start
+```
+
+2. Open your browser:
+```
+http://localhost:3000
+```
+
+3. Grant microphone permissions when prompted.
+
+### More Detailed Examples
+1. Starting a conversation:
+```javascript
+// Initialize audio context and request microphone access
+await initAudio();
+// Click the Start button to begin streaming
+startButton.onclick = startStreaming;
+```
+
+2. Customizing the system prompt:
+```javascript
+const SYSTEM_PROMPT = "You are a friendly conversational partner...";
+socket.emit('systemPrompt', SYSTEM_PROMPT);
+```
+
+### Troubleshooting
+1. Microphone Access Issues
+- Problem: Browser shows "Permission denied for microphone"
+- Solution: 
+  ```javascript
+  // Check if microphone permissions are granted
+  const permissions = await navigator.permissions.query({ name: 'microphone' });
+  if (permissions.state === 'denied') {
+    console.error('Microphone access is required');
+  }
+  ```
+
+2. Audio Playback Issues
+- Problem: No audio output
+- Solution:
+  ```javascript
+  // Verify AudioContext is initialized
+  if (audioContext.state === 'suspended') {
+    await audioContext.resume();
+  }
+  ```
+
+3. Connection Issues
+- Check server logs for connection status
+- Verify WebSocket connection:
+  ```javascript
+  socket.on('connect_error', (error) => {
+    console.error('Connection failed:', error);
+  });
+  ```
+
+## Data Flow
+The application processes audio input through a pipeline that converts speech to text, processes it with AWS Bedrock, and returns both text and audio responses.
+
+```ascii
+User Speech -> Browser → Server → Client
+     ↑                               ↓
+     │                   Amazon Nova Sonic Model
+     │                               ↓
+Audio Output ← Browser ← Server ← Client
+```
+
+Key flow components:
+1. User speaks into the microphone through Browser
+2. Audio is streamed through Server to Client
+3. Client sends audio to Amazon Nova Sonic Model
+4. Nova Sonic processes audio and generates AI response
+5. Response is sent back through client to server to browser
+6. Browser plays audio response to user
+
+
+## Infrastructure
+The application runs on a Node.js server with the following key components:
+
+- Express.js server handling WebSocket connections
+- Socket.IO for real-time communication
+- Nova Sonic client for speech to speech model processing
+
+## Knowledge Base Integration
+
+This project integrates with Amazon Bedrock Knowledge Base to provide accurate responses about company benefit policies. The integration works as follows:
+
+1. A Knowledge Base is created in Amazon Bedrock using the sample benefit policy document (`kb/Aglaia_Benefit_Policy.pdf`)
+2. The Nova Sonic model is configured with a tool schema that allows it to query the Knowledge Base
+3. When a user asks a question about benefits, the model determines if it should use the Knowledge Base
+4. If needed, the model calls the Knowledge Base retrieval function with the user's query
+5. The retrieved information is used by the model to provide an accurate response
+
+### Important: Knowledge Base Configuration
+
+Before running the application, you must:
+
+1. Create a Knowledge Base in Amazon Bedrock using the provided sample document
+2. Update the `KNOWLEDGE_BASE_ID` in `src/client.ts` (around line 280) with your Knowledge Base ID:
+
+```typescript
+// Replace with your actual Knowledge Base ID
+const KNOWLEDGE_BASE_ID = 'KB_ID'; // Change this to your Knowledge Base ID
+```
+
+### Creating a Knowledge Base
+
+To create a Knowledge Base using the provided sample document:
+
+1. Go to the AWS Bedrock console
+2. Navigate to Knowledge bases
+3. Click "Create knowledge base"
+4. Follow the wizard to create a new knowledge base with vector store
+5. Upload the `kb/Aglaia_Benefit_Policy.pdf` file as your data source
+6. Complete the creation process and note your Knowledge Base ID
+7. Update the ID in the code as mentioned above

@@ -1,0 +1,35 @@
+{
+  "name": "@amazon/nova-s2s-typescript-example",
+  "version": "1.0.0",
+  "description": "",
+  "type": "commonjs",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/server.js",
+    "dev": "ts-node src/server.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@aws-sdk/client-bedrock-runtime": "file:/Volumes/workplace/github/JSSDK/JsSdkV3/clients/client-bedrock-runtime",
+    "@aws-sdk/client-bedrock-agent-runtime": "file:/Volumes/workplace/github/JSSDK/JsSdkV3/clients/client-bedrock-agent-runtime",
+    "@aws-sdk/credential-providers": "file:/Volumes/workplace/github/JSSDK/JsSdkV3/packages/credential-providers",
+    "@aws-sdk/node-http-handler": "file:/Volumes/workplace/github/JSSDK/JsSdkV3/deprecated/packages/node-http-handler",
+    "@smithy/node-http-handler": "^4.0.3",
+    "@smithy/types": "^4.1.0",
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.13.9",
+    "axios": "^1.6.2",
+    "dotenv": "^16.3.1",
+    "express": "^4.21.2",
+    "pnpm": "^10.6.1",
+    "rxjs": "^7.8.2",
+    "socket.io": "^4.8.1",
+    "ts-node": "^10.9.2",
+    "uuid": "^11.1.0"
+  },
+  "devDependencies": {
+    "tsx": "^4.19.3"
+  }
+}
