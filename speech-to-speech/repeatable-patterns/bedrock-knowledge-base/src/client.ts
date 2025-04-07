@@ -3,10 +3,7 @@ import {
   BedrockRuntimeClientConfig,
   InvokeModelWithBidirectionalStreamCommand,
   InvokeModelWithBidirectionalStreamInput,
-  ToolChoice,
 } from "@aws-sdk/client-bedrock-runtime";
-import axios from 'axios';
-import https from 'https';
 import {
   NodeHttp2Handler,
   NodeHttp2HandlerOptions,
@@ -23,9 +20,7 @@ import {
   DefaultAudioOutputConfiguration,
   DefaultSystemPrompt,
   DefaultTextConfiguration,
-  DefaultToolSchema,
   KnowledgeBaseToolSchema,
-  WeatherToolSchema
 } from "./consts";
 import { BedrockKnowledgeBaseClient } from "./bedrock-kb-client";
 
@@ -244,30 +239,6 @@ export class NovaSonicBidirectionalStreamClient {
     const tool = toolName.toLowerCase();
 
     switch (tool) {
-      case "getdateandtimetool":
-        const date = new Date().toLocaleString("en-US", { timeZone: "America/Los_Angeles" });
-        const pstDate = new Date(date);
-        return {
-          date: pstDate.toISOString().split('T')[0],
-          year: pstDate.getFullYear(),
-          month: pstDate.getMonth() + 1,
-          day: pstDate.getDate(),
-          dayOfWeek: pstDate.toLocaleString('en-US', { weekday: 'long' }).toUpperCase(),
-          timezone: "PST",
-          formattedTime: pstDate.toLocaleTimeString('en-US', {
-            hour12: true,
-            hour: '2-digit',
-            minute: '2-digit'
-          })
-        };
-      case "getweathertool":
-        console.log(`weather tool`)
-        const parsedContent = await this.parseToolUseContentForWeather(toolUseContent);
-        console.log("parsed content")
-        if (!parsedContent) {
-          throw new Error('parsedContent is undefined');
-        }
-        return this.fetchWeatherData(parsedContent?.latitude, parsedContent?.longitude);
       case "retrieve_benefit_policy":
         console.log(`Retrieving company benefits: ${JSON.stringify(toolUseContent)}`);
         const kbContent = await this.parseToolUseContent(toolUseContent);
@@ -326,59 +297,6 @@ export class NovaSonicBidirectionalStreamClient {
     } catch (error) {
       console.error("Failed to parse tool use content:", error);
       return null;
-    }
-  }
-
-  private async parseToolUseContentForWeather(toolUseContent: any): Promise<{ latitude: number; longitude: number; } | null> {
-    try {
-      // Check if the content field exists and is a string
-      if (toolUseContent && typeof toolUseContent.content === 'string') {
-        // Parse the JSON string into an object
-        const parsedContent = JSON.parse(toolUseContent.content);
-        console.log(`parsedContent ${parsedContent}`)
-        // Return the parsed content
-        return {
-          latitude: parsedContent.latitude,
-          longitude: parsedContent.longitude
-        };
-      }
-      return null;
-    } catch (error) {
-      console.error("Failed to parse tool use content:", error);
-      return null;
-    }
-  }
-
-
-  private async fetchWeatherData(
-    latitude: number,
-    longitude: number
-  ): Promise<Record<string, any>> {
-    const ipv4Agent = new https.Agent({ family: 4 });
-    const url = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current_weather=true`;
-
-    try {
-      const response = await axios.get(url, {
-        httpsAgent: ipv4Agent,
-        timeout: 5000,
-        headers: {
-          'User-Agent': 'MyApp/1.0',
-          'Accept': 'application/json'
-        }
-      });
-      const weatherData = response.data;
-      console.log("weatherData:", weatherData);
-
-      return {
-        weather_data: weatherData
-      };
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        console.error(`Error fetching weather data: ${error.message}`, error);
-      } else {
-        console.error(`Unexpected error: ${error instanceof Error ? error.message : String(error)} `, error);
-      }
-      throw error;
     }
   }
 
