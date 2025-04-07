@@ -1,4 +1,4 @@
-# Nova Sonic Python Streaming Implementation
+# Amazon Nova Sonic Python Streaming Implementation
 
 This repository contains Python scripts that implement real-time audio streaming applications integrating with Amazon Nova Sonic model. These implementations enable natural conversational interactions through a command-line interface while leveraging Amazon's powerful Nova Sonic model for processing and generating responses.
 
@@ -15,7 +15,7 @@ This repository includes three different implementations of the Nova Sonic model
 ## Features
 
 - Real-time audio streaming from your microphone to AWS Bedrock
-- Bidirectional communication with Nova Sonic Speech to Speech model
+- Bidirectional communication with Nova Sonic model
 - Audio playback of Nova Sonic responses
 - Simple console-based interface showing transcripts
 - Support for debug mode with verbose logging
@@ -139,8 +139,6 @@ You can modify the following parameters in the scripts:
 - `SAMPLE_RATE`: Audio sample rate (default: 16000 Hz for input, 24000 Hz for output)
 - `CHANNELS`: Number of audio channels (default: 1)
 - `CHUNK_SIZE`: Audio buffer size (varies by implementation)
-- `model_id`: AWS Bedrock model ID (default: 'amazon.nova-sonic-v1:0')
-- `region`: AWS region (default: 'us-east-1')
 
 You can also customize the system prompt by modifying the `default_system_prompt` variable in the `initialize_stream` method.
 
