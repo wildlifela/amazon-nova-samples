@@ -54,33 +54,30 @@ This feature is particularly useful for:
 
 ## Installation
 
-1. Extract the AWS SDK Bedrock experimental package and install the wheel files:
+1. Create and activate a virtual environment:
 
-You can use either the tarball (.tar.gz) or zip file (.zip) based on your preference:
+First, navigate to the root folder of the project and create a virtual environment:
 
-**Option A: Using the tarball**
 ```bash
-# Extract the AWS SDK Bedrock experimental tarball
-cd sdk
-tar -xzf aws_sdk_bedrock_experimental.tar.gz
-```
+# Create a virtual environment
+python -m venv .venv
 
-**Option B: Using the zip file**
-```bash
-# Extract the AWS SDK Bedrock experimental zip file
-cd sdk
-unzip aws_sdk_bedrock_experimental.zip
+# Activate the virtual environment
+# On macOS/Linux:
+source .venv/bin/activate
+# On Windows:
+# .venv\Scripts\activate
 ```
 
 2. Install all dependencies:
 
-First go the root folder where you have your requirements.txt file then run:
+With the virtual environment activated, install the required packages:
 
 ```bash
-python -m pip install -r requirements.txt
+python -m pip install -r requirements.txt --force-reinstall
 ```
 
-3. Configure AWS credentials:
+2. Configure AWS credentials:
 
 The application uses environment variables for AWS authentication. Set these before running the application:
 
