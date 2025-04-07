@@ -31,12 +31,29 @@ This repository includes three different implementations of the Nova Sonic model
 
 ## Installation
 
-1. Install all dependencies:
+## Installation
 
-First go the root folder where you have your requirements.txt file then run:
+1. Create and activate a virtual environment:
+
+First, navigate to the root folder of the project and create a virtual environment:
 
 ```bash
-python -m pip install -r requirements.txt
+# Create a virtual environment
+python -m venv .venv
+
+# Activate the virtual environment
+# On macOS/Linux:
+source .venv/bin/activate
+# On Windows:
+# .venv\Scripts\activate
+```
+
+2. Install all dependencies:
+
+With the virtual environment activated, install the required packages:
+
+```bash
+python -m pip install -r requirements.txt --force-reinstall
 ```
 
 2. Configure AWS credentials:
