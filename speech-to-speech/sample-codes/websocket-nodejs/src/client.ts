@@ -3,7 +3,6 @@ import {
   BedrockRuntimeClientConfig,
   InvokeModelWithBidirectionalStreamCommand,
   InvokeModelWithBidirectionalStreamInput,
-  ToolChoice,
 } from "@aws-sdk/client-bedrock-runtime";
 import axios from 'axios';
 import https from 'https';
@@ -162,7 +161,7 @@ export class NovaSonicBidirectionalStreamClient {
 
 
   constructor(config: NovaSonicBidirectionalStreamClientConfig) {
-    const http2Client = new NodeHttp2Handler({
+    const nodeHttp2Handler = new NodeHttp2Handler({
       requestTimeout: 300000,
       sessionTimeout: 300000,
       disableConcurrentStreams: false,
@@ -178,7 +177,7 @@ export class NovaSonicBidirectionalStreamClient {
       ...config.clientConfig,
       credentials: config.clientConfig.credentials,
       region: config.clientConfig.region || "us-east-1",
-      requestHandler: http2Client
+      requestHandler: nodeHttp2Handler
     });
 
     this.inferenceConfig = config.inferenceConfig ?? {
