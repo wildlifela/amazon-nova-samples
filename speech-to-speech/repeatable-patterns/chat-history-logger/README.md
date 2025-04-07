@@ -132,7 +132,6 @@ You can modify the following parameters in the scripts:
 - `SAMPLE_RATE`: Audio sample rate (default: 16000 Hz for input, 24000 Hz for output)
 - `CHANNELS`: Number of audio channels (default: 1)
 - `CHUNK_SIZE`: Audio buffer size (varies by implementation)
-- `model_id`: AWS Bedrock model ID (default: 'amazon.nova-sonic-v1:0')
 
 You can also customize the system prompt by modifying the `default_system_prompt` variable in the `initialize_stream` method.
 
