@@ -1,8 +1,26 @@
-# Nova S2S TypeScript Example: Real-time Audio Streaming with AWS Bedrock Integration
+# Amazon Nova Sonic TypeScript Example: Hotel Reservation Cancellation Customer Service
 
-This project implements a bidirectional WebSocket-based audio streaming application that integrates with AWS Bedrock's Nova Speech to Speech model for real-time speech-to-speech conversion. The application enables natural conversational interactions through a web interface while leveraging Amazon's new powerful Speech to Speech model for processing and generating responses.
+This example demonstrates a practical customer service use case for Amazon Nova Sonic model, implementing a hotel reservation cancellation system. The application enables natural conversational interactions through a web interface, allowing customers to cancel their hotel reservations through voice commands while interacting with an AI assistant.
 
-The system consists of a server that handles the bidirectional streaming and AWS Bedrock integration, paired with a modern web client that manages audio streaming and user interactions. Key features include real-time audio streaming, integration with AWS Bedrock Nova Speech to Speech model, bidirectional communication handling, and a responsive web interface with chat history management. It supports also command-line interface to run an interaction with a recorded audio.
+The system showcases how businesses can leverage Amazon Nova Sonic model to create seamless, human-like customer service experiences for handling hotel cancellations, including policy explanations, refund calculations, and confirmation processes.
+
+## Use Case Overview
+
+This application simulates a hotel reservation cancellation service with the following workflow:
+
+1. Customer initiates a conversation with the Amazon Nova Sonic
+2. Agent verifies customer identity and reservation details (name, check-in date)
+3. Agent explains applicable cancellation policies and potential refund amounts
+4. Customer confirms cancellation intent
+5. Agent processes the cancellation and provides confirmation details
+6. Agent delivers a summary of the transaction with next steps
+
+The system demonstrates how to handle real-world customer service scenarios including:
+- Reservation lookup by customer name and check-in date
+- Dynamic refund calculations based on cancellation policies
+- Clear communication of policy terms
+- Confirmation workflows to prevent accidental cancellations
+- Handling of edge cases like non-existent reservations
 
 ## Repository Structure
 ```
@@ -18,9 +36,21 @@ The system consists of a server that handles the bidirectional streaming and AWS
 ├── src/                    # TypeScript source files
 │   ├── client.ts          # AWS Bedrock client implementation
 │   ├── server.ts          # Express server implementation
+│   ├── hotel-confirmation.ts # Hotel reservation cancellation logic
+│   ├── consts.ts          # System prompts and configuration
 │   └── types.ts           # TypeScript type definitions
 └── tsconfig.json          # TypeScript configuration
 ```
+
+## Key Features
+
+- **Real-time Voice Interaction**: Bidirectional audio streaming for natural conversations
+- **Reservation Verification**: Tool for looking up reservation details by name and date
+- **Dynamic Cancellation Policies**: Different refund calculations based on timing and reservation type
+- **Confirmation Workflow**: Explicit confirmation required before processing cancellations
+- **Refund Calculation**: Automatic calculation of refund amounts based on cancellation policies
+- **Confirmation Codes**: Generation of unique cancellation confirmation codes
+- **Responsive Web Interface**: User-friendly interface with chat history
 
 ## Usage Instructions
 ### Prerequisites
@@ -102,20 +132,16 @@ http://localhost:3000
 
 3. Grant microphone permissions when prompted.
 
-### More Detailed Examples
-1. Starting a conversation:
-```javascript
-// Initialize audio context and request microphone access
-await initAudio();
-// Click the Start button to begin streaming
-startButton.onclick = startStreaming;
-```
+### Sample Conversation Flow
 
-2. Customizing the system prompt:
-```javascript
-const SYSTEM_PROMPT = "You are a friendly conversational partner...";
-socket.emit('systemPrompt', SYSTEM_PROMPT);
-```
+Here's an example of how a conversation might flow:
+
+1. **Customer**: "Hi, I need to cancel my hotel reservation."
+2. **Agent**: "Hello! I'm here to help you cancel your hotel reservation. Could you please provide your full name and check-in date?"
+3. **Customer**: "My name is Angela Park and my check-in date is April 12, 2025."
+4. **Agent**: "Thank you, Angela. I've found your reservation at Seaview Hotel for a Deluxe Ocean View room from April 12 to April 15, 2025. According to our policy, you're eligible for a full refund if you cancel by April 5, 2025, or a 50% refund until April 10. Would you like to proceed with cancelling this reservation?"
+5. **Customer**: "Yes, please cancel it."
+6. **Agent**: "I've processed your cancellation. Your confirmation code is CANX-123456. You'll receive a full refund of $750.00 to your original payment method within 5-7 business days. Is there anything else I can help you with?"
 
 ### Troubleshooting
 1. Microphone Access Issues
@@ -154,7 +180,7 @@ The application processes audio input through a pipeline that converts speech to
 ```ascii
 User Speech -> Browser → Server → Client
      ↑                               ↓
-     │                   AWS Bedrock Nova S2S Model
+     │                   Amazon Nova Sonic Model
      │                               ↓
 Audio Output ← Browser ← Server ← Client
 ```
@@ -162,11 +188,10 @@ Audio Output ← Browser ← Server ← Client
 Key flow components:
 1. User speaks into the microphone through Browser
 2. Audio is streamed through Server to Client
-3. Client sends audio to AWS Bedrock Nova S2S Model
-4. Nova S2S processes audio and generates AI response
+3. Client sends audio to Amazon Nova Sonic Model with hotel cancellation context
+4. Nova Sonic processes audio, uses reservation tools, and generates response
 5. Response is sent back through client to server to browser
 6. Browser plays audio response to user
-
 
 ## Infrastructure
 The application runs on a Node.js server with the following key components:
@@ -174,3 +199,4 @@ The application runs on a Node.js server with the following key components:
 - Express.js server handling WebSocket connections
 - Socket.IO for real-time communication
 - Nova S2S client for speech to speech model processing
+- Hotel reservation and cancellation business logic
