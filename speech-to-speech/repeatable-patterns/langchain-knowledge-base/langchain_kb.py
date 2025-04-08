@@ -89,7 +89,7 @@ def retrieve_context(query: str, persist_directory: str = PERSIST_DIRECTORY, k: 
         retrieved_docs.append({
             "content": doc.page_content,
             "metadata": doc.metadata,
-            "relevance_score": float(score)  # Convert numpy float to Python float
+            "relevance_score": float(score) 
         })
     
     return retrieved_docs
