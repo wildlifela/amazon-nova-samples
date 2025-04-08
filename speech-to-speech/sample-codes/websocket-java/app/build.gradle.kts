@@ -20,7 +20,8 @@ repositories {
 }
 
 dependencies {
-    implementation(files("/Volumes/workplace/github/amazon-nova-samples/bidi-stream/NovaS2SWebSocketExample/app/libs/aws-sdk-java-bundle-2.31.6-SNAPSHOT.jar"))
+    implementation("software.amazon.awssdk:bedrockruntime:2.31.18")
+    implementation("software.amazon.awssdk:netty-nio-client:2.31.18")
     implementation("org.slf4j:slf4j-api:2.0.9")
     implementation("org.json:json:20230227")
     implementation("io.reactivex.rxjava3:rxjava:3.1.8")
