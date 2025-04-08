@@ -31,8 +31,6 @@ This repository includes three different implementations of the Nova Sonic model
 
 ## Installation
 
-## Installation
-
 1. Create and activate a virtual environment:
 
 First, navigate to the root folder of the project and create a virtual environment:
