@@ -289,7 +289,6 @@ class BedrockStreamManager:
     def _initialize_client(self):
         """Initialize the Bedrock client."""
         config = Config(
-            #endpoint_uri=f"https://preprod.us-east-1.dataplane.bedrock.aws.dev/",
             endpoint_uri=f"https://bedrock-runtime.{self.region}.amazonaws.com",
             region=self.region,
             aws_credentials_identity_resolver=EnvironmentCredentialsResolver(),
