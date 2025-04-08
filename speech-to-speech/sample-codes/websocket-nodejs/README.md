@@ -29,30 +29,19 @@ The system consists of a server that handles the bidirectional streaming and AWS
 - AWS CLI configured with appropriate credentials
 - Modern web browser with WebAudio API support
 
-### Important: SDK Package Installation
-Since the AWS Bedrock SDK is experimental, you'll need to download and install the packages manually:
-
-1. Download the AWS SDK packages from the AWS SDK repository
-2. Install the following packages:
-   - @aws-sdk/client-bedrock-runtime
-   - @aws-sdk/credential-providers 
-   - @smithy/node-http-handler
-   - @smithy/types
-
-Note: The exact versions and paths will depend on your SDK installation. Make sure to use compatible versions.
-
-Required packages:
-> **Note:** Please update the SDK paths in `package.json` according to your local environment.
+**Required packages:**
 
 ```json
 {
   "dependencies": {
-    "@aws-sdk/client-bedrock-runtime": "*",
-    "@aws-sdk/credential-providers": "*",
-    "@smithy/node-http-handler": "*",
+    "@aws-sdk/client-bedrock-runtime": "^3.785",
+    "@aws-sdk/client-bedrock-agent-runtime": "^3.782",
+    "@aws-sdk/credential-providers": "^3.782",
+    "@smithy/node-http-handler": "^4.0.4",
     "@smithy/types": "^4.1.0",
     "@types/express": "^5.0.0",
     "@types/node": "^22.13.9",
+    "axios": "^1.6.2",
     "dotenv": "^16.3.1",
     "express": "^4.21.2",
     "pnpm": "^10.6.1",

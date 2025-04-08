@@ -87,28 +87,19 @@ Before running the application, you must create a Knowledge Base in Amazon Bedro
 const KNOWLEDGE_BASE_ID = 'YOUR_KB_ID_HERE';
 ```
 
-### SDK Package Installation
-Since the AWS Bedrock SDK is experimental, you'll need to download and install the packages manually:
-
-1. Download the AWS SDK packages from the AWS SDK repository
-2. Install the following packages:
-   - @aws-sdk/client-bedrock-runtime
-   - @aws-sdk/credential-providers 
-   - @smithy/node-http-handler
-   - @smithy/types
-
-Required packages:
-> **Note:** Please update the SDK paths in `package.json` according to your local environment.
+**Required packages:**
 
 ```json
 {
   "dependencies": {
-    "@aws-sdk/client-bedrock-runtime": "file:/Volumes/workplace/github/JSSDK/JsSdkV3/clients/client-bedrock-runtime",
-    "@aws-sdk/credential-providers": "file:/Volumes/workplace/github/JSSDK/JsSdkV3/packages/credential-providers",
-    "@smithy/node-http-handler": "^4.0.3",
+    "@aws-sdk/client-bedrock-runtime": "^3.785",
+    "@aws-sdk/client-bedrock-agent-runtime": "^3.782",
+    "@aws-sdk/credential-providers": "^3.782",
+    "@smithy/node-http-handler": "^4.0.4",
     "@smithy/types": "^4.1.0",
     "@types/express": "^5.0.0",
     "@types/node": "^22.13.9",
+    "axios": "^1.6.2",
     "dotenv": "^16.3.1",
     "express": "^4.21.2",
     "pnpm": "^10.6.1",
