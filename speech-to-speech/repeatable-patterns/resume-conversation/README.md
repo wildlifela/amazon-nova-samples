@@ -10,6 +10,84 @@ The primary focus of this example is to showcase how Nova Sonic can maintain con
 3. Enabling the model to pick up exactly where the conversation left off
 4. Providing a natural, seamless experience for the user
 
+## Usage Instructions
+### Prerequisites
+- Node.js (v14 or higher)
+- AWS Account with Bedrock access
+- AWS CLI configured with appropriate credentials
+- Modern web browser with WebAudio API support
+
+### Important: SDK Package Installation
+Since the AWS Bedrock SDK is experimental, you'll need to download and install the packages manually:
+
+1. Download the AWS SDK packages from the AWS SDK repository
+2. Install the following packages:
+   - @aws-sdk/client-bedrock-runtime
+   - @aws-sdk/credential-providers 
+   - @smithy/node-http-handler
+   - @smithy/types
+
+Note: The exact versions and paths will depend on your SDK installation. Make sure to use compatible versions.
+
+Required packages:
+> **Note:** Please update the SDK paths in `package.json` according to your local environment.
+
+```json
+{
+  "dependencies": {
+    "@aws-sdk/client-bedrock-runtime": "file:/Volumes/workplace/github/JSSDK/JsSdkV3/clients/client-bedrock-runtime",
+    "@aws-sdk/credential-providers": "file:/Volumes/workplace/github/JSSDK/JsSdkV3/packages/credential-providers",
+    "@smithy/node-http-handler": "^4.0.3",
+    "@smithy/types": "^4.1.0",
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.13.9",
+    "dotenv": "^16.3.1",
+    "express": "^4.21.2",
+    "pnpm": "^10.6.1",
+    "rxjs": "^7.8.2",
+    "socket.io": "^4.8.1",
+    "ts-node": "^10.9.2",
+    "uuid": "^11.1.0"
+  }
+}
+```
+
+### Installation
+1. Clone the repository:
+```bash
+git clone <repository-url>
+cd <repository-name>
+```
+
+2. Install dependencies:
+```bash
+npm install
+```
+
+3. Configure AWS credentials:
+```bash
+# Configure AWS CLI with your credentials
+aws configure --profile bedrock-test
+```
+
+4. Build the TypeScript code:
+```bash
+npm run build
+```
+
+### Quick Start
+1. Start the server:
+```bash
+npm start
+```
+
+2. Open your browser:
+```
+http://localhost:3000
+```
+
+3. Grant microphone permissions when prompted.
+
 ## Key Conversation Resumption Features
 
 - **Context Preservation**: Maintains full conversation history between sessions

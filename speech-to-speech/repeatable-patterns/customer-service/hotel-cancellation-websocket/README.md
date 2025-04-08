@@ -66,7 +66,6 @@ Since the AWS Bedrock SDK is experimental, you'll need to download and install t
 2. Install the following packages:
    - @aws-sdk/client-bedrock-runtime
    - @aws-sdk/credential-providers 
-   - @aws-sdk/node-http-handler
    - @smithy/node-http-handler
    - @smithy/types
 
@@ -80,7 +79,6 @@ Required packages:
   "dependencies": {
     "@aws-sdk/client-bedrock-runtime": "file:/Volumes/workplace/github/JSSDK/JsSdkV3/clients/client-bedrock-runtime",
     "@aws-sdk/credential-providers": "file:/Volumes/workplace/github/JSSDK/JsSdkV3/packages/credential-providers",
-    "@aws-sdk/node-http-handler": "file:/Volumes/workplace/github/JSSDK/JsSdkV3/deprecated/packages/node-http-handler",
     "@smithy/node-http-handler": "^4.0.3",
     "@smithy/types": "^4.1.0",
     "@types/express": "^5.0.0",

@@ -1,10 +1,34 @@
-# Nova Sonic TypeScript Example: Real-time Audio Streaming with AWS Bedrock Integration
+# Amazon Nova Sonic TypeScript Example: Bedrock Knowledge Base Integration
 
-This project implements a bidirectional WebSocket-based audio streaming application that integrates with Amazon Nova Sonic model for real-time speech-to-speech conversion. The application enables natural conversational interactions through a web interface while leveraging Amazon's new powerful Nova Sonic model for processing and generating responses.
+This project demonstrates how to build an intelligent conversational application by integrating Amazon Nova Sonic model with Amazon Bedrock Knowledge Base. The application enables natural speech-to-speech interactions while leveraging a knowledge base to provide accurate, contextual responses about company benefit policies.
 
-The system consists of a server that handles the bidirectional streaming and AWS Bedrock integration, paired with a modern web client that manages audio streaming and user interactions. Key features include real-time audio streaming, integration with Amazon Nova Sonic model, bidirectional communication handling, and a responsive web interface with chat history management. It supports also command-line interface to run an interaction with a recorded audio.
+## Key Features
 
-This implementation also includes integration with Amazon Bedrock Knowledge Base, allowing the Nova Sonic model to retrieve information from a knowledge base containing company benefit policies. This enables the model to provide accurate and contextual responses to questions about employee benefits.
+- **Knowledge Base Integration**: Retrieves accurate information from company benefit policies stored in Amazon Bedrock Knowledge Base
+- **Real-time Speech-to-Speech**: Bidirectional WebSocket-based audio streaming with Amazon Nova Sonic model
+- **Natural Conversational Experience**: Seamless interaction through a responsive web interface
+- **Contextual Responses**: AI-generated answers informed by knowledge base content
+- **Multi-platform Support**: Web interface and command-line options for interactions
+
+## Knowledge Base Integration
+
+This implementation showcases how to enhance AI responses with domain-specific knowledge:
+
+1. **Knowledge Base Creation**: Uses a sample benefit policy document (`kb/Aglaia_Benefit_Policy.pdf`) to create a searchable knowledge base
+2. **Tool Schema Integration**: Configures Nova Sonic model with a tool schema for knowledge base queries
+3. **Intelligent Retrieval**: Model determines when to use the knowledge base based on user questions
+4. **Contextual Response Generation**: Retrieved information is incorporated into natural-sounding responses
+
+### Knowledge Base Workflow
+
+```
+User Speech → Amazon Nova Sonic → Tool Use Detection → Bedrock KB Query → 
+                                                                             ↓
+                                                                        Vector DB
+                                                                             ↓
+User ← Audio Output ← Amazon Nova Sonic ← Tool Results ← Retrieved Context
+
+```
 
 ## Repository Structure
 ```
@@ -12,11 +36,6 @@ This implementation also includes integration with Amazon Bedrock Knowledge Base
 ├── public/                 # Frontend web application files
 │   ├── index.html          # Main application entry point
 │   └── src/                # Frontend source code
-│       ├── lib/            # Core frontend libraries
-│       │   ├── play/       # Audio playback components
-│       │   └── util/       # Utility functions and managers
-│       ├── main.js         # Main application logic
-│       └── style.css       # Application styling
 ├── src/                    # TypeScript source files
 │   ├── client.ts           # AWS Bedrock client implementation
 │   ├── bedrock-kb-client.ts # AWS Bedrock Knowledge Base client implementation
@@ -28,25 +47,55 @@ This implementation also includes integration with Amazon Bedrock Knowledge Base
 └── tsconfig.json           # TypeScript configuration
 ```
 
-## Usage Instructions
+## Setting Up the Knowledge Base
+
 ### Prerequisites
 - Node.js (v14 or higher)
 - AWS Account with Bedrock access
 - AWS CLI configured with appropriate credentials
 - Modern web browser with WebAudio API support
 
-### Important: SDK Package Installation
+### Creating Your Knowledge Base
+
+Before running the application, you must create a Knowledge Base in Amazon Bedrock:
+
+1. **Access the AWS Bedrock Console**:
+   - Navigate to the AWS Management Console
+   - Search for "Amazon Bedrock" and open the service
+
+2. **Create a New Knowledge Base**:
+   - In the left navigation pane, select "Knowledge bases"
+   - Click "Create knowledge base"
+   - Follow the wizard to create a new knowledge base with vector store
+   - Choose a name that reflects your content (e.g., "CompanyBenefitsKB")
+
+3. **Configure Data Source**:
+   - Select "Upload files" as your data source by using S3
+   - Upload the `kb/Aglaia_Benefit_Policy.pdf` file provided in this repository
+   - Configure chunking settings (default settings work well for most cases)
+
+4. **Complete Setup**:
+   - Review your settings and create the knowledge base
+   - Once created, note your Knowledge Base ID for the next step
+
+5. **Update Application Configuration**:
+   - Open `src/client.ts` (around line 280)
+   - Replace the placeholder with your actual Knowledge Base ID:
+
+```typescript
+// Replace with your actual Knowledge Base ID
+const KNOWLEDGE_BASE_ID = 'YOUR_KB_ID_HERE';
+```
+
+### SDK Package Installation
 Since the AWS Bedrock SDK is experimental, you'll need to download and install the packages manually:
 
 1. Download the AWS SDK packages from the AWS SDK repository
 2. Install the following packages:
    - @aws-sdk/client-bedrock-runtime
    - @aws-sdk/credential-providers 
-   - @aws-sdk/node-http-handler
    - @smithy/node-http-handler
    - @smithy/types
-
-Note: The exact versions and paths will depend on your SDK installation. Make sure to use compatible versions.
 
 Required packages:
 > **Note:** Please update the SDK paths in `package.json` according to your local environment.
@@ -56,7 +105,6 @@ Required packages:
   "dependencies": {
     "@aws-sdk/client-bedrock-runtime": "file:/Volumes/workplace/github/JSSDK/JsSdkV3/clients/client-bedrock-runtime",
     "@aws-sdk/credential-providers": "file:/Volumes/workplace/github/JSSDK/JsSdkV3/packages/credential-providers",
-    "@aws-sdk/node-http-handler": "file:/Volumes/workplace/github/JSSDK/JsSdkV3/deprecated/packages/node-http-handler",
     "@smithy/node-http-handler": "^4.0.3",
     "@smithy/types": "^4.1.0",
     "@types/express": "^5.0.0",
@@ -72,7 +120,8 @@ Required packages:
 }
 ```
 
-### Installation
+## Installation and Setup
+
 1. Clone the repository:
 ```bash
 git clone <repository-url>
@@ -95,7 +144,8 @@ aws configure --profile bedrock-test
 npm run build
 ```
 
-### Quick Start
+## Running the Application
+
 1. Start the server:
 ```bash
 npm start
@@ -108,109 +158,74 @@ http://localhost:3000
 
 3. Grant microphone permissions when prompted.
 
-### More Detailed Examples
-1. Starting a conversation:
-```javascript
-// Initialize audio context and request microphone access
-await initAudio();
-// Click the Start button to begin streaming
-startButton.onclick = startStreaming;
+4. Start asking questions about company benefits to see the Knowledge Base in action:
+  - "What medical benefits does Aglaia offer?"
+  - "Tell me about the vision coverage in the Aglaia policy"
+  - "What are the retirement benefits at Aglaia?"
+  - "How does the dental plan work?"
+
+## Testing Knowledge Base Retrieval
+
+To verify the Knowledge Base integration is working correctly:
+
+1. Ask a question about company benefits
+2. The system should:
+   - Recognize the question requires knowledge base information
+   - Query the knowledge base for relevant content
+   - Provide an accurate response based on the benefit policy document
+
+3. Check server logs to see knowledge base retrieval in action:
+```bash
+# View logs with knowledge base queries
+npm start | grep "Knowledge Base"
 ```
 
-2. Customizing the system prompt:
-```javascript
-const SYSTEM_PROMPT = "You are a friendly conversational partner...";
-socket.emit('systemPrompt', SYSTEM_PROMPT);
-```
+## Troubleshooting Knowledge Base Issues
 
-### Troubleshooting
-1. Microphone Access Issues
-- Problem: Browser shows "Permission denied for microphone"
-- Solution: 
-  ```javascript
-  // Check if microphone permissions are granted
-  const permissions = await navigator.permissions.query({ name: 'microphone' });
-  if (permissions.state === 'denied') {
-    console.error('Microphone access is required');
-  }
-  ```
+1. **Knowledge Base Not Responding**:
+   - Verify your Knowledge Base ID is correct in `src/client.ts`
+   - Check that your AWS credentials have proper permissions
+   - Ensure the knowledge base is in "Available" status in the AWS console
 
-2. Audio Playback Issues
-- Problem: No audio output
-- Solution:
-  ```javascript
-  // Verify AudioContext is initialized
-  if (audioContext.state === 'suspended') {
-    await audioContext.resume();
-  }
-  ```
+2. **Incorrect or Missing Responses**:
+   - Verify the document was properly ingested into the knowledge base
+   - Check chunking settings in the knowledge base configuration
+   - Try rephrasing your question to be more specific
 
-3. Connection Issues
-- Check server logs for connection status
-- Verify WebSocket connection:
-  ```javascript
-  socket.on('connect_error', (error) => {
-    console.error('Connection failed:', error);
-  });
-  ```
+3. **General Connection Issues**:
+   - Check server logs for connection status
+   - Verify WebSocket connection:
+     ```javascript
+     socket.on('connect_error', (error) => {
+       console.error('Connection failed:', error);
+     });
+     ```
 
-## Data Flow
-The application processes audio input through a pipeline that converts speech to text, processes it with AWS Bedrock, and returns both text and audio responses.
+## Extending the Knowledge Base
+
+To enhance the knowledge base with additional documents:
+
+1. Add new PDF, TXT, or other supported documents to the `kb/` directory
+2. Upload these documents to your knowledge base in the AWS Bedrock console
+3. No code changes are needed as long as you're using the same knowledge base ID
+
+## Data Flow with Knowledge Base
 
 ```ascii
-User Speech -> Browser → Server → Client
-     ↑                               ↓
-     │                   Amazon Nova Sonic Model
-     │                               ↓
-Audio Output ← Browser ← Server ← Client
+User Question → Browser → Server → Client → Knowledge Base Decision
+     ↑                                              ↓
+     │                                     Knowledge Base Query
+     │                                              ↓
+     │                                     Amazon Nova Sonic Model
+     │                                              ↓
+Audio Response ← Browser ← Server ← Client ← Response Generation
 ```
 
-Key flow components:
-1. User speaks into the microphone through Browser
-2. Audio is streamed through Server to Client
-3. Client sends audio to Amazon Nova Sonic Model
-4. Nova Sonic processes audio and generates AI response
-5. Response is sent back through client to server to browser
-6. Browser plays audio response to user
-
-
 ## Infrastructure
+
 The application runs on a Node.js server with the following key components:
 
 - Express.js server handling WebSocket connections
 - Socket.IO for real-time communication
 - Nova Sonic client for speech to speech model processing
-
-## Knowledge Base Integration
-
-This project integrates with Amazon Bedrock Knowledge Base to provide accurate responses about company benefit policies. The integration works as follows:
-
-1. A Knowledge Base is created in Amazon Bedrock using the sample benefit policy document (`kb/Aglaia_Benefit_Policy.pdf`)
-2. The Nova Sonic model is configured with a tool schema that allows it to query the Knowledge Base
-3. When a user asks a question about benefits, the model determines if it should use the Knowledge Base
-4. If needed, the model calls the Knowledge Base retrieval function with the user's query
-5. The retrieved information is used by the model to provide an accurate response
-
-### Important: Knowledge Base Configuration
-
-Before running the application, you must:
-
-1. Create a Knowledge Base in Amazon Bedrock using the provided sample document
-2. Update the `KNOWLEDGE_BASE_ID` in `src/client.ts` (around line 280) with your Knowledge Base ID:
-
-```typescript
-// Replace with your actual Knowledge Base ID
-const KNOWLEDGE_BASE_ID = 'KB_ID'; // Change this to your Knowledge Base ID
-```
-
-### Creating a Knowledge Base
-
-To create a Knowledge Base using the provided sample document:
-
-1. Go to the AWS Bedrock console
-2. Navigate to Knowledge bases
-3. Click "Create knowledge base"
-4. Follow the wizard to create a new knowledge base with vector store
-5. Upload the `kb/Aglaia_Benefit_Policy.pdf` file as your data source
-6. Complete the creation process and note your Knowledge Base ID
-7. Update the ID in the code as mentioned above
+- Bedrock Knowledge Base client for information retrieval

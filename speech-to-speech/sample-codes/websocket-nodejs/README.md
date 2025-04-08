@@ -1,4 +1,4 @@
-# Nova Sonic TypeScript Example: Real-time Audio Streaming with AWS Bedrock Integration
+# Amazon Nova Sonic TypeScript Example: Real-time Audio Streaming with AWS Bedrock Integration
 
 This project implements a bidirectional WebSocket-based audio streaming application that integrates with Amazon Nova Sonic model for real-time speech-to-speech conversion. The application enables natural conversational interactions through a web interface while leveraging Amazon's new powerful Nova Sonic model for processing and generating responses.
 
@@ -36,7 +36,6 @@ Since the AWS Bedrock SDK is experimental, you'll need to download and install t
 2. Install the following packages:
    - @aws-sdk/client-bedrock-runtime
    - @aws-sdk/credential-providers 
-   - @aws-sdk/node-http-handler
    - @smithy/node-http-handler
    - @smithy/types
 
@@ -48,10 +47,9 @@ Required packages:
 ```json
 {
   "dependencies": {
-    "@aws-sdk/client-bedrock-runtime": "file:/Volumes/workplace/github/JSSDK/JsSdkV3/clients/client-bedrock-runtime",
-    "@aws-sdk/credential-providers": "file:/Volumes/workplace/github/JSSDK/JsSdkV3/packages/credential-providers",
-    "@aws-sdk/node-http-handler": "file:/Volumes/workplace/github/JSSDK/JsSdkV3/deprecated/packages/node-http-handler",
-    "@smithy/node-http-handler": "^4.0.3",
+    "@aws-sdk/client-bedrock-runtime": "*",
+    "@aws-sdk/credential-providers": "*",
+    "@smithy/node-http-handler": "*",
     "@smithy/types": "^4.1.0",
     "@types/express": "^5.0.0",
     "@types/node": "^22.13.9",
@@ -113,7 +111,7 @@ startButton.onclick = startStreaming;
 
 2. Customizing the system prompt:
 ```javascript
-const SYSTEM_PROMPT = "You are a friendly conversational partner...";
+const SYSTEM_PROMPT = "You are a friend. The user and you will engage in a spoken...";
 socket.emit('systemPrompt', SYSTEM_PROMPT);
 ```
 
