@@ -87,18 +87,18 @@ const mockCancellationPolicies: { [key: string]: CancellationPolicy } = {
     },
     "RES-23456": {
         reservationId: "RES-23456",
-        freeCancellationUntil: "2025-01-10", // 5 days before check-in
-        partialRefundUntil: "2025-01-14", // 1 day before check-in
+        freeCancellationUntil: "2025-05-10", // 5 days before check-in
+        partialRefundUntil: "2025-05-14", // 1 day before check-in
         partialRefundPercentage: 30,
-        noRefundAfter: "2025-01-14",
+        noRefundAfter: "2025-05-14",
         additionalNotes: "Non-refundable deposit of $100 applies to all cancellations",
     },
     "RES-34567": {
         reservationId: "RES-34567",
         freeCancellationUntil: null, // No free cancellation
-        partialRefundUntil: "2025-02-03", // 7 days before check-in
+        partialRefundUntil: "2025-06-03", // 7 days before check-in
         partialRefundPercentage: 25,
-        noRefundAfter: "2025-02-03",
+        noRefundAfter: "2025-06-03",
         additionalNotes: "Special event rate with limited cancellation options",
     }
 };
