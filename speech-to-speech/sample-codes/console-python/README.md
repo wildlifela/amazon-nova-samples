@@ -202,3 +202,6 @@ User Speech → PyAudio → Amazon Nova Sonic Model → Tool Execution → Audio
      └──────────────────────────────────────────────────────────────────────┘
                                   Conversation
 ```
+
+## Known Limitation
+> **Warning:** Use a headset for testing, as a known issue with PyAudio affects its handling of echo. You may experience unexpected interruptions if running the samples with open speakers.
