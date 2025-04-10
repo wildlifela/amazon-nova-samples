@@ -9,3 +9,7 @@ This repository provides sample applications, organized into subfolders:
 - The `repeatable-patterns` folder includes common integration patterns, such as Retrieval-Augmented Generation (RAG) using Amazon Bedrock Knowledge Bases or Langchain, chat history logging, and business-oriented sample apps like customer service and resume conversation scenarios.
 
 To learn more about Amazon Nova Sonic, refer to the [User Guide](https://docs.aws.amazon.com/nova/latest/userguide/speech.html)
+
+## Browser Compatibility Warning
+> **Warning:** The WebSocket-based sample applications with UIs in this repository are optimized for Google Chrome and may not function properly in other browsers. These applications require the ability to set the audio sample rate to 16kHz for proper microphone streaming over WebSockets, which Firefox and some other browsers do not support natively.
+Firefox does not allow setting the input audio sample rate required by Amazon Bedrock's Nova Sonic model, and would need additional code to perform audio conversion. For the best demo experience, please use Google Chrome when running these WebSocket-based UI samples.
