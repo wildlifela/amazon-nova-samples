@@ -9,6 +9,7 @@ bedrock_agent_runtime_client = boto3.client('bedrock-agent-runtime')
 
 ## Setup LLMs
 def get_llm(model_id: str, aws_region: str='us-west-2',):
+
     config = Config(
         retries = dict(
             max_attempts = 10,
