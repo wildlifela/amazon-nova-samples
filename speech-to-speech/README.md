@@ -12,4 +12,4 @@ To learn more about Amazon Nova Sonic, refer to the [User Guide](https://docs.aw
 
 ## Browser Compatibility Warning
 > **Warning:** The WebSocket-based sample applications with UIs in this repository are optimized for Google Chrome and may not function properly in other browsers. These applications require the ability to set the audio sample rate to 16kHz for proper microphone streaming over WebSockets, which Firefox and some other browsers do not support natively.
-Firefox does not allow setting the input audio sample rate required by Amazon Bedrock's Nova Sonic model, and would need additional code to perform audio conversion. For the best demo experience, please use Google Chrome when running these WebSocket-based UI samples.
+Firefox does not allow setting the input audio sample rate required by Amazon Nova Sonic model, and would need additional code to perform audio conversion. For the best demo experience, please use Google Chrome when running these WebSocket-based UI samples.
