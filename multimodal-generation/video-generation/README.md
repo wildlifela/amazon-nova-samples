@@ -1,6 +1,6 @@
 # Amazon Nova Reel Video Generator Code Samples
 
-This repository includes code examples for common image generation and editing tasks using AmazonNova Reel video generation model. Examples are provided in Python (.py), Jupyter Notebook (.ipynb), and Javascript (.js) formats. Sample images for use with these scripts have also been provided.
+This repository includes code examples for common image generation and editing tasks using Amazon Nova Reel video generation model. Examples are provided in Python (.py), Jupyter Notebook (.ipynb), and Javascript (.js) formats. Sample images for use with these scripts have also been provided.
 
 ## Setup - Permissions and Model Entitlement
 
