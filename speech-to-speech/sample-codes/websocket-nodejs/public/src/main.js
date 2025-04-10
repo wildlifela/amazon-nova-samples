@@ -38,6 +38,9 @@ let role;
 const audioPlayer = new AudioPlayer();
 let sessionInitialized = false;
 
+let samplingRatio = 1;
+const TARGET_SAMPLE_RATE = 16000; 
+
 // Custom system prompt - you can modify this
 let SYSTEM_PROMPT = "You are a friend. The user and you will engage in a spoken " +
     "dialog exchanging the transcripts of a natural real-time conversation. Keep your responses short, " +
@@ -58,9 +61,19 @@ async function initAudio() {
             }
         });
 
-        audioContext = new AudioContext({
-            sampleRate: 16000
-        });
+        if (navigator.userAgent.toLowerCase().includes('firefox')) {
+            //firefox doesn't allow audio context have differnt sample rate than what the user media device offers
+            audioContext = new AudioContext();
+        } else {
+            audioContext = new AudioContext({
+                sampleRate: TARGET_SAMPLE_RATE
+            });
+        }
+
+        //samplingRatio - is only relevant for firefox, for Chromium based browsers, it's always 1
+        samplingRatio = audioContext.sampleRate / TARGET_SAMPLE_RATE;
+        console.log(`Debug AudioContext- sampleRate: ${audioContext.sampleRate} samplingRatio: ${samplingRatio}`)
+        
 
         await audioPlayer.start();
 
@@ -116,11 +129,17 @@ async function startStreaming() {
                 if (!isStreaming) return;
 
                 const inputData = e.inputBuffer.getChannelData(0);
+                const numSamples = Math.round(inputData.length / samplingRatio)
 
                 // Convert to 16-bit PCM
-                const pcmData = new Int16Array(inputData.length);
+                const pcmData = new Int16Array(numSamples);
                 for (let i = 0; i < inputData.length; i++) {
-                    pcmData[i] = Math.max(-1, Math.min(1, inputData[i])) * 0x7FFF;
+                    //NOTE: for firefox the samplingRatio is not 1, 
+                    // so it will downsample by skipping some input samples
+                    // A better approach is to compute the mean of the samplingRatio samples.
+                    // or pass through a low-pass filter first 
+                    // But skipping is a preferable low-latency operation
+                    pcmData[i] = Math.max(-1, Math.min(1, inputData[i * samplingRatio])) * 0x7FFF;
                 }
 
                 // Convert to base64 (browser-safe way)
