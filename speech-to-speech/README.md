@@ -11,6 +11,10 @@ This repository provides sample applications, organized into subfolders:
 To learn more about Amazon Nova Sonic, refer to the [User Guide](https://docs.aws.amazon.com/nova/latest/userguide/speech.html)
 
 
+## Browser Compatibility Warning
+> **Warning:** The WebSocket-based sample applications with UIs in this repository are optimized for Google Chrome and may not function properly in other browsers. These applications require the ability to set the audio sample rate to 16kHz for proper microphone streaming over WebSockets, which Firefox and some other browsers do not support natively.
+Firefox does not allow setting the input audio sample rate required by Amazon Nova Sonic model, and would need additional code to perform audio conversion. For the best demo experience, please use Google Chrome when running these WebSocket-based UI samples.
+
 ## Reference Solutions
 The following projects were developed by AWS teams and showcase examples of how to build solutions using Amazon Nova Sonic and AWS services, serve as helpful inspiration or starting points for your own implementations.
 
@@ -22,7 +26,3 @@ The following projects were developed by AWS teams and showcase examples of how 
 
     A CDK-deployable Nova Sonic S2S application designed as a flexible foundation for building PoCs. The CDK package deploys the WebSocket service to Amazon ECS Fargate and hosts the frontend web application on Amazon S3 and CloudFront as a static site with Amazon Cognito authentication.
 
-
-## Browser Compatibility Warning
-> **Warning:** The WebSocket-based sample applications with UIs in this repository are optimized for Google Chrome and may not function properly in other browsers. These applications require the ability to set the audio sample rate to 16kHz for proper microphone streaming over WebSockets, which Firefox and some other browsers do not support natively.
-Firefox does not allow setting the input audio sample rate required by Amazon Nova Sonic model, and would need additional code to perform audio conversion. For the best demo experience, please use Google Chrome when running these WebSocket-based UI samples.
