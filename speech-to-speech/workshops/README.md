@@ -35,7 +35,7 @@ nova-s2s-workshop/
 
 ### Prerequisites
 - Python 3.12+
-- Node.js 14+ and npm/yarn for UI development
+- Node.js v23+ and npm/yarn for UI development
 - AWS account with Bedrock access
 - AWS credentials configured locally
 
