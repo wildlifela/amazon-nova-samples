@@ -42,13 +42,6 @@ nova-s2s-workshop/
 ### Install and start the Python websocket server
 
 1. Clone the repository:
-    
-    From GitLab
-    ```bash
-    git clone git@ssh.gitlab.aws.dev:lanaz/nova-s2s-workshop.git
-    cd nova-s2s-workshop
-    ```
-    From Github
     ```bash
     git clone https://github.com/aws-samples/amazon-nova-samples
     mv amazon-nova-samples/speech-to-speech/workshops nova-s2s-workshop
