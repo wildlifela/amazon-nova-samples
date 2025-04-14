@@ -7,6 +7,7 @@ The Amazon Nova Sonic model uses the `InvokeModelWithBidirectionalStream` API, w
 This repository provides sample applications, organized into subfolders:
 - The `sample-codes` folder contains basic examples in Java, Node.js, and Python. If you're looking for a quick start to understand how to interact with Nova Sonic in your preferred programming language, this is the place to begin.
 - The `repeatable-patterns` folder includes common integration patterns, such as Retrieval-Augmented Generation (RAG) using Amazon Bedrock Knowledge Bases or Langchain, chat history logging, and business-oriented sample apps like customer service and resume conversation scenarios.
+- The `workshops` folder contains sample code for both AWS-led and self-service workshops. It includes a Python WebSocket server and a React web application designed to expose technical details for training purposes.
 
 To learn more about Amazon Nova Sonic, refer to the [User Guide](https://docs.aws.amazon.com/nova/latest/userguide/speech.html)
 
