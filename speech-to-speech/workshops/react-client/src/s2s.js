@@ -361,85 +361,102 @@ class S2sChatBot extends React.Component {
         }
     }
       
-    async startMicrophone() {    
+    async startMicrophone() {
         try {
-            
-            // Start microphone
             const stream = await navigator.mediaDevices.getUserMedia({
-            audio: {
-                    channelCount: 1,           // Mono
-                    sampleRate: 16000,         // 16kHz
-                    sampleSize: 16,            // 16-bit
-                    echoCancellation: true,    // Enable echo cancellation
-                    noiseSuppression: true,    // Enable noise suppression
-                    autoGainControl: true      // Enable automatic gain control
+                audio: {
+                    echoCancellation: true,
+                    noiseSuppression: true,
+                    autoGainControl: true
                 }
             });
-
-            // Create AudioContext for processing
-            const audioContext = new AudioContext({
-                sampleRate: 16000,
+    
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)({
                 latencyHint: 'interactive'
             });
-
-            // Create MediaStreamSource
+    
             const source = audioContext.createMediaStreamSource(stream);
-
-            // Create ScriptProcessor for raw PCM data
             const processor = audioContext.createScriptProcessor(512, 1, 1);
-
+    
             source.connect(processor);
             processor.connect(audioContext.destination);
-
-            processor.onaudioprocess = (e) => {
+    
+            const targetSampleRate = 16000;
+    
+            processor.onaudioprocess = async (e) => {
                 if (this.state.sessionStarted) {
-                    const inputData = e.inputBuffer.getChannelData(0);
-
-                    const buffer = new ArrayBuffer(inputData.length * 2);
+                    const inputBuffer = e.inputBuffer;
+    
+                    // Create an offline context for resampling
+                    const offlineContext = new OfflineAudioContext({
+                        numberOfChannels: 1,
+                        length: Math.ceil(inputBuffer.duration * targetSampleRate),
+                        sampleRate: targetSampleRate
+                    });
+    
+                    // Copy input to offline context buffer
+                    const offlineSource = offlineContext.createBufferSource();
+                    const monoBuffer = offlineContext.createBuffer(1, inputBuffer.length, inputBuffer.sampleRate);
+                    monoBuffer.copyToChannel(inputBuffer.getChannelData(0), 0);
+    
+                    offlineSource.buffer = monoBuffer;
+                    offlineSource.connect(offlineContext.destination);
+                    offlineSource.start(0);
+    
+                    // Resample and get the rendered buffer
+                    const renderedBuffer = await offlineContext.startRendering();
+                    const resampled = renderedBuffer.getChannelData(0);
+    
+                    // Convert to Int16 PCM
+                    const buffer = new ArrayBuffer(resampled.length * 2);
                     const pcmData = new DataView(buffer);
-                    for (let i = 0; i < inputData.length; i++) {
-                        const int16 = Math.max(-32768, Math.min(32767, Math.round(inputData[i] * 32767)));
-                        pcmData.setInt16(i * 2, int16, true);
+    
+                    for (let i = 0; i < resampled.length; i++) {
+                        const s = Math.max(-1, Math.min(1, resampled[i]));
+                        pcmData.setInt16(i * 2, s < 0 ? s * 0x8000 : s * 0x7FFF, true);
                     }
-                    // Binary data string
-                    let data = "";
+    
+                    // Convert to binary string and base64 encode
+                    let binary = '';
                     for (let i = 0; i < pcmData.byteLength; i++) {
-                        data += String.fromCharCode(pcmData.getUint8(i));
+                        binary += String.fromCharCode(pcmData.getUint8(i));
                     }
-
-                    // Send to WebSocket
-                    const event = S2sEvent.audioInput(this.state.promptName, this.state.audioContentName, btoa(data));
+    
+                    const event = S2sEvent.audioInput(
+                        this.state.promptName,
+                        this.state.audioContentName,
+                        btoa(binary)
+                    );
                     this.sendEvent(event);
                 }
             };
-
-            // Store cleanup functions
+    
             window.audioCleanup = () => {
                 processor.disconnect();
                 source.disconnect();
                 stream.getTracks().forEach(track => track.stop());
             };
-
+    
             this.mediaRecorder = new MediaRecorder(stream);
             this.mediaRecorder.ondataavailable = (event) => {
                 this.state.audioChunks.push(event.data);
             };
             this.mediaRecorder.onstop = () => {
-                const audioBlob = new Blob(this.state.audioChunks, { type: 'audio/wav' });
-
-                // Send to WebSocket
+                const audioBlob = new Blob(this.state.audioChunks, { type: 'audio/webm' });
                 this.sendEvent(S2sEvent.audioInput(this.state.promptName, this.state.audioContentName, btoa(audioBlob)));
-                this.setState({audioChunks: []});
+                this.setState({ audioChunks: [] });
             };
-
+    
             this.mediaRecorder.start();
-            this.setState({sessionStarted: true});
+            this.setState({ sessionStarted: true });
             console.log('Microphone recording started');
+    
         } catch (error) {
             console.error('Error accessing microphone: ', error);
         }
-
     }
+    
+    
 
     endSession() {
         if (this.socket) {
