@@ -35,21 +35,22 @@ nova-s2s-workshop/
 
 ### Prerequisites
 - Python 3.12+
-- Node.js v23+ and npm/yarn for UI development
+- Node.js 14+ and npm/yarn for UI development
 - AWS account with Bedrock access
 - AWS credentials configured locally
 
+## Installation instruction
+Clone the repository:
+    
+```bash
+git clone https://github.com/aws-samples/amazon-nova-samples
+mv amazon-nova-samples/speech-to-speech/workshops nova-s2s-workshop
+rm -rf amazon-nova-samples
+cd nova-s2s-workshop
+```
+
 ### Install and start the Python websocket server
-
-1. Clone the repository:
-    ```bash
-    git clone https://github.com/aws-samples/amazon-nova-samples
-    mv amazon-nova-samples/speech-to-speech/workshops nova-s2s-workshop
-    rm -rf amazon-nova-samples
-    cd nova-s2s-workshop
-    ```
-
-2. Start Python virtual machine
+1. Start Python virtual machine
     ```
     cd python-server
     python3 -m venv .venv
@@ -63,12 +64,12 @@ nova-s2s-workshop/
     .venv\Scripts\activate
     ```
 
-3. Install Python dependencies:
+2. Install Python dependencies:
     ```bash
     pip install -r requirements.txt
     ```
 
-4. Set environment variables:
+3. Set environment variables:
     
     The AWS access key and secret are required for the Python application, as they are needed by the underlying Smithy authentication library.
     ```bash
@@ -90,7 +91,7 @@ nova-s2s-workshop/
     export KB_ID='YOUR_KNOWLEDGE_BASES_ID'
     ```
 
-5. Start the python websocket server
+4. Start the python websocket server
     ```bash
     python server.py
     ```

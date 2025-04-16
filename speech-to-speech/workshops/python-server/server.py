@@ -116,25 +116,26 @@ async def websocket_handler(websocket):
                             debug_print(message[0:180])
                         else:
                             debug_print(message)
-
-                    # Store prompt name and content names if provided
-                    if event_type == 'promptStart':
-                        stream_manager.prompt_name = data['event']['promptStart']['promptName']
-                    elif event_type == 'contentStart' and data['event']['contentStart'].get('type') == 'AUDIO':
-                        stream_manager.audio_content_name = data['event']['contentStart']['contentName']
-                    
-                    # Handle audio input separately
-                    if event_type == 'audioInput':
-                        # Extract audio data
-                        prompt_name = data['event']['audioInput']['promptName']
-                        content_name = data['event']['audioInput']['contentName']
-                        audio_base64 = data['event']['audioInput']['content']
+                            
+                    if event_type:
+                        # Store prompt name and content names if provided
+                        if event_type == 'promptStart':
+                            stream_manager.prompt_name = data['event']['promptStart']['promptName']
+                        elif event_type == 'contentStart' and data['event']['contentStart'].get('type') == 'AUDIO':
+                            stream_manager.audio_content_name = data['event']['contentStart']['contentName']
                         
-                        # Add to the audio queue
-                        stream_manager.add_audio_chunk(prompt_name, content_name, audio_base64)
-                    else:
-                        # Send other events directly to Bedrock
-                        await stream_manager.send_raw_event(data)
+                        # Handle audio input separately
+                        if event_type == 'audioInput':
+                            # Extract audio data
+                            prompt_name = data['event']['audioInput']['promptName']
+                            content_name = data['event']['audioInput']['contentName']
+                            audio_base64 = data['event']['audioInput']['content']
+                            
+                            # Add to the audio queue
+                            stream_manager.add_audio_chunk(prompt_name, content_name, audio_base64)
+                        else:
+                            # Send other events directly to Bedrock
+                            await stream_manager.send_raw_event(data)
             except json.JSONDecodeError:
                 print("Invalid JSON received from WebSocket")
             except Exception as e:
