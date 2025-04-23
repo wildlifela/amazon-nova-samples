@@ -203,24 +203,25 @@ class S2sChatBot extends React.Component {
             let key = null;
             let ts = Date.now();
             let interrupted = false;
+            const contentType = event.event[eventName].type;
+            const contentName = event.event[eventName].contentName;
+            const contentId = event.event[eventName].contentId;
 
             if (eventName === "audioOutput") {
-                const contentId = event.event[eventName].contentId;
-                key = `${eventName}-${contentId.substr(0,8)}`;
+                key = `${eventName}-${contentId}`;
+                // truncate event audio content
+                event.event.audioOutput.content = event.event.audioOutput.content.substr(0,10);
             }
             else if (eventName === "audioInput") {
-                const contentName = event.event[eventName].contentName;
-                key = `${eventName}-${contentName.substr(0,8)}-${this.state.audioInputIndex}`;
+                key = `${eventName}-${contentName}-${this.state.audioInputIndex}`;
             }
-            else if (eventName === "contentStart") {
-                const contentType = event.event[eventName].type;
-                key = `${eventName}-${contentType}-${ts}`;
+            else if (eventName === "contentStart" || eventName === "textInput" || eventName === "contentEnd") {
+                key = `${eventName}}-${contentName}-${contentType}`;
                 if (type === "in" && event.event[eventName].type === "AUDIO") {
                     this.setState({audioInputIndex: this.state.audioInputIndex + 1});
                 }
                 else if(type === "out") {
-                    const contentName = event.event[eventName].contentName;
-                    key = `${eventName}-${contentName.substr(0,8)}-${contentType}-${ts}`;
+                    key = `${eventName}-${contentName}-${contentType}-${ts}`;
                 }
             }
             else if(eventName === "textOutput") {
@@ -310,17 +311,15 @@ class S2sChatBot extends React.Component {
 
                 // Chat history
                 if (this.state.includeChatHistory) {
-                    const chatHistoryContentName = crypto.randomUUID();
-                    
-                    this.sendEvent(S2sEvent.contentStartText(promptName, chatHistoryContentName));
-                    
                     var chatHistory = JSON.parse(this.state.configChatHistory);
                     if (chatHistory === null) chatHistory = S2sEvent.DEFAULT_CHAT_HISTORY;
                     for (const chat of chatHistory) {
-                        this.sendEvent(S2sEvent.textInput(promptName, chatHistoryContentName, chat.content, chat.role));
+                        const chatHistoryContentName = crypto.randomUUID();
+                        this.sendEvent(S2sEvent.contentStartText(promptName, chatHistoryContentName, chat.role));
+                        this.sendEvent(S2sEvent.textInput(promptName, chatHistoryContentName, chat.content));
+                        this.sendEvent(S2sEvent.contentEnd(promptName, chatHistoryContentName));
                     }
                     
-                    this.sendEvent(S2sEvent.contentEnd(promptName, chatHistoryContentName));
                 }
 
                 this.sendEvent(S2sEvent.contentStartAudio(promptName, audioContentName));
