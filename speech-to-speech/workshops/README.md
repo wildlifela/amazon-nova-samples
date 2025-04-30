@@ -112,7 +112,7 @@ cd nova-s2s-workshop
 
 3. Set up environment variables for the REACT app.
 
-    If you've started the WebSocket from the previous step, set WS_URL to ws://localhost:8081
+    If you've started the WebSocket from the previous step, set REACT_APP_WEBSOCKET_URL to ws://localhost:8081
     ```bash
     export REACT_APP_WEBSOCKET_URL='ws://localhost:8081'
     ```
