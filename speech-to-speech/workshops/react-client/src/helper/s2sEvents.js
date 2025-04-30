@@ -47,13 +47,17 @@ class S2sEvent {
           description: "get information about the Amazon policy",
           inputSchema: {
             json: JSON.stringify({
-                "type": "object",
-                "properties": {},
-                "required": []
-              }
-            )
-          }
-        }
+              type: "object",
+              properties: {
+                query: {
+                  type: "string",
+                  description: "the query to be answered by the knowledge base",
+                },
+              },
+              required: ["query"],
+            }),
+          },
+        },
       }
     ]
     };
