@@ -7,7 +7,7 @@ KB_REGION = os.environ.get('KB_REGION', 'us-east-1')
 bedrock_agent_runtime = boto3.client('bedrock-agent-runtime', region_name=KB_REGION) 
 
 def retrieve_kb(query):
-    print(query)
+    #print(KB_ID,query)
     results = []
     # Call KB
     response = bedrock_agent_runtime.retrieve(

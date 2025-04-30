@@ -75,6 +75,7 @@ cd nova-s2s-workshop
     ```bash
     export AWS_ACCESS_KEY_ID="YOUR_AWS_ACCESS_KEY_ID"
     export AWS_SECRET_ACCESS_KEY="YOUR_AWS_SECRET"
+    export AWS_DEFAULT_REGION="us-east-1"
     ```
     The WebSocket host and port must be specified:
     ```bash
@@ -97,6 +98,8 @@ cd nova-s2s-workshop
     python server.py
     ```
 
+⚠️ **Warning:** Keep the Python WebSocket server running, then run the section below to launch the React web application, which will connect to the WebSocket service.
+
 ### Install and start the REACT frontend application
 1. Navigate to the `react-client` folder
     ```bash
@@ -109,7 +112,7 @@ cd nova-s2s-workshop
 
 3. Set up environment variables for the REACT app.
 
-    If you've started the WebSocket from the previous step, set WS_URL to ws://localhost:8081
+    If you've started the WebSocket from the previous step, set REACT_APP_WEBSOCKET_URL to ws://localhost:8081
     ```bash
     export REACT_APP_WEBSOCKET_URL='ws://localhost:8081'
     ```
@@ -120,3 +123,5 @@ cd nova-s2s-workshop
     ```
     npm start
     ```
+
+> Known issue: This UI is intended for demonstration purposes and may encounter state management issues after frequent conversation start/stop actions. Refreshing the page can help resolve the issue.
