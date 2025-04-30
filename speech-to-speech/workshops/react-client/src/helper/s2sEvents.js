@@ -108,7 +108,7 @@ class S2sEvent {
       }
     }
   
-    static contentStartText(promptName, contentName) {
+    static contentStartText(promptName, contentName, role="SYSTEM") {
       return {
         "event": {
           "contentStart": {
@@ -116,7 +116,7 @@ class S2sEvent {
             "contentName": contentName,
             "type": "TEXT",
             "interactive": true,
-            "role": "SYSTEM",
+            "role": role,
             "textInputConfiguration": {
               "mediaType": "text/plain"
             }
@@ -125,7 +125,7 @@ class S2sEvent {
       }
     }
   
-    static textInput(promptName, contentName, systemPrompt = S2sEvent.DEFAULT_SYSTEM_PROMPT, role=null) {
+    static textInput(promptName, contentName, systemPrompt = S2sEvent.DEFAULT_SYSTEM_PROMPT) {
       var evt = {
         "event": {
           "textInput": {
@@ -134,9 +134,6 @@ class S2sEvent {
             "content": systemPrompt
           }
         }
-      }
-      if (role !== null) {
-        evt.event.textInput.role = role;
       }
       return evt;
     }

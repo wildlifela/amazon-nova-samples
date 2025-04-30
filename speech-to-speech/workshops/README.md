@@ -86,8 +86,9 @@ cd nova-s2s-workshop
     export HEALTH_PORT=8082 
     ```
     
-    You can ignore the Bedrock Knowledge Base ID if you do not plan to test or implement Knowledge Base integration.
+    You can ignore the Bedrock Knowledge Base Region and ID if you do not plan to test or implement Knowledge Base integration.
     ```bash
+    export KB_REGION='YOUR_KNOLEDGE_BASE_REGION_NAME'
     export KB_ID='YOUR_KNOWLEDGE_BASES_ID'
     ```
 
