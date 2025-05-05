@@ -23,7 +23,7 @@ To evaluate the behavior of this code, you can utilize the below notebook.
 
 ## Usage
 To use nova_client.py, ensure you set the below ENV Variables
-1. DATA_BUCKET = <set it to the bucket where you would like to upload the PDF files>
+1. DATA_BUCKET = set it to the S3 bucket where you would like to upload the PDF files
 2. If you intend to change the user prompt, update the variable "question_with_template" in main()
 3. Toggle the value of MODEL_TO_TEST to the model you would like to test with. The current setting works with "amazon.nova-pro-v1:0"
 
