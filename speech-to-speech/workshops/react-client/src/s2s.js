@@ -25,6 +25,10 @@ class S2sChatBot extends React.Component {
             audioPlayPromise: null,
             includeChatHistory: false,
 
+            promptName: null,
+            textContentName: null,
+            audioContentName: null,
+
             // S2S config items
             configAudioInput: null,
             configSystemPrompt: S2sEvent.DEFAULT_SYSTEM_PROMPT,
@@ -40,9 +44,6 @@ class S2sChatBot extends React.Component {
         this.audioPlayerRef = createRef();
         this.audioQueue = [];
 
-        this.promptName = null;
-        this.textContentName = null;
-        this.audioContentName = null;
     }
 
     componentDidMount() {
@@ -99,7 +100,7 @@ class S2sChatBot extends React.Component {
                 try {
                     this.audioPlayerRef.current.src = audioUrl;
                     this.audioPlayerRef.current.load();  // Reload the audio element to apply the new src
-                    this.setState({audioPlayPromise: this.audioPlayerRef.current.play().catch((err) => {})}); 
+                    this.setState({audioPlayPromise: this.audioPlayerRef.current.play()}); 
                 }
                 catch(err) {
                     console.log(err);
@@ -285,9 +286,14 @@ class S2sChatBot extends React.Component {
         
             this.socket.onopen = () => {
                 console.log("WebSocket connected!");
-                this.promptName = crypto.randomUUID();
-                this.textContentName = crypto.randomUUID();
-                this.audioContentName = crypto.randomUUID();        
+                const promptName = crypto.randomUUID();
+                const textContentName = crypto.randomUUID();
+                const audioContentName = crypto.randomUUID();
+                this.setState({
+                    promptName: promptName,
+                    textContentName: textContentName,
+                    audioContentName: audioContentName
+                })
     
                 // Start session events
                 this.sendEvent(S2sEvent.sessionStart());
@@ -296,12 +302,12 @@ class S2sChatBot extends React.Component {
                 audioConfig.voiceId = this.state.configVoiceIdOption.value;
                 var toolConfig = this.state.configToolUse?JSON.parse(this.state.configToolUse):S2sEvent.DEFAULT_TOOL_CONFIG;
 
-                this.sendEvent(S2sEvent.promptStart(this.promptName, audioConfig, toolConfig));
+                this.sendEvent(S2sEvent.promptStart(promptName, audioConfig, toolConfig));
 
-                this.sendEvent(S2sEvent.contentStartText(this.promptName, this.textContentName));
+                this.sendEvent(S2sEvent.contentStartText(promptName, textContentName));
 
-                this.sendEvent(S2sEvent.textInput(this.promptName, this.textContentName, this.state.configSystemPrompt));
-                this.sendEvent(S2sEvent.contentEnd(this.promptName, this.textContentName));
+                this.sendEvent(S2sEvent.textInput(promptName, textContentName, this.state.configSystemPrompt));
+                this.sendEvent(S2sEvent.contentEnd(promptName, textContentName));
 
                 // Chat history
                 if (this.state.includeChatHistory) {
@@ -309,14 +315,14 @@ class S2sChatBot extends React.Component {
                     if (chatHistory === null) chatHistory = S2sEvent.DEFAULT_CHAT_HISTORY;
                     for (const chat of chatHistory) {
                         const chatHistoryContentName = crypto.randomUUID();
-                        this.sendEvent(S2sEvent.contentStartText(this.promptName, chatHistoryContentName, chat.role));
-                        this.sendEvent(S2sEvent.textInput(this.promptName, chatHistoryContentName, chat.content));
-                        this.sendEvent(S2sEvent.contentEnd(this.promptName, chatHistoryContentName));
+                        this.sendEvent(S2sEvent.contentStartText(promptName, chatHistoryContentName, chat.role));
+                        this.sendEvent(S2sEvent.textInput(promptName, chatHistoryContentName, chat.content));
+                        this.sendEvent(S2sEvent.contentEnd(promptName, chatHistoryContentName));
                     }
                     
                 }
 
-                this.sendEvent(S2sEvent.contentStartAudio(this.promptName, this.audioContentName));
+                this.sendEvent(S2sEvent.contentStartAudio(promptName, audioContentName));
               };
 
             // Handle incoming messages
@@ -349,7 +355,6 @@ class S2sChatBot extends React.Component {
 
             // Start microphone 
             this.startMicrophone();
-
         } catch (error) {
             console.error('Error accessing microphone: ', error);
         }
@@ -417,8 +422,8 @@ class S2sChatBot extends React.Component {
                     }
     
                     const event = S2sEvent.audioInput(
-                        this.promptName,
-                        this.audioContentName,
+                        this.state.promptName,
+                        this.state.audioContentName,
                         btoa(binary)
                     );
                     this.sendEvent(event);
@@ -437,7 +442,7 @@ class S2sChatBot extends React.Component {
             };
             this.mediaRecorder.onstop = () => {
                 const audioBlob = new Blob(this.state.audioChunks, { type: 'audio/webm' });
-                this.sendEvent(S2sEvent.audioInput(this.promptName, this.audioContentName, btoa(audioBlob)));
+                this.sendEvent(S2sEvent.audioInput(this.state.promptName, this.state.audioContentName, btoa(audioBlob)));
                 this.setState({ audioChunks: [] });
             };
     
@@ -461,17 +466,14 @@ class S2sChatBot extends React.Component {
             }
 
             // Close S2sSessionManager
-            this.sendEvent(S2sEvent.contentEnd(this.promptName, this.audioContentName));
-            this.sendEvent(S2sEvent.promptEnd(this.promptName));
+            this.sendEvent(S2sEvent.contentEnd(this.state.promptName, this.state.audioContentName));
+            this.sendEvent(S2sEvent.promptEnd(this.state.promptName));
             this.sendEvent(S2sEvent.sessionEnd());
 
             // Close websocket
             this.socket.close();
 
-            this.setState({
-                sessionStarted: false,
-            });
-
+            this.setState({sessionStarted: false});
         }
   
     }

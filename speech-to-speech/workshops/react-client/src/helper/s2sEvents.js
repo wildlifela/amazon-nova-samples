@@ -27,7 +27,8 @@ class S2sEvent {
     };
   
     static DEFAULT_TOOL_CONFIG = {
-      tools: [{
+      tools: [
+        {
         toolSpec: {
           name: "getDateTool",
           description: "get information about the current date and time",
@@ -47,17 +48,56 @@ class S2sEvent {
           description: "get information about the Amazon policy",
           inputSchema: {
             json: JSON.stringify({
+                "type": "object",
+                "properties": {},
+                "required": []
+              }
+            )
+          }
+        }
+      },
+      {
+        toolSpec: {
+          name: "locationMcpTool",
+          description: "Access location services to find places, addresses.",
+          inputSchema: {
+            json: JSON.stringify({
+                "type": "object",
+                "properties": {
+                  "query": {
+                    "type": "string",
+                    "description": "Query required to find a place or address. For example 'largest zoo in Seattle'}"
+                  }
+                },
+                "required": ["query"]
+              }
+            )
+          }
+        }
+      },
+    
+      {
+        toolSpec: {
+          name: "getBookingDetails",
+          description: "Manage bookings: create, get, update, delete, list, or find bookings by customer name. For update_booking, you can update by booking_id or by customer_name. If booking_id is not provided, all bookings for the given customer_name will be updated.",
+          inputSchema: {
+            json: JSON.stringify({
               type: "object",
               properties: {
-                query: {
+                operation: {
                   type: "string",
-                  description: "the query to be answered by the knowledge base",
+                  description: "The booking operation to perform. One of: get_booking, create_booking, update_booking, delete_booking, list_bookings, find_bookings_by_customer. For update_booking, you can specify either booking_id or customer_name. If booking_id is not provided, all bookings for the given customer_name will be updated."
                 },
+                booking_id: { type: "string", description: "Booking ID (for get, update, delete)" },
+                customer_name: { type: "string", description: "Customer name (for find_bookings_by_customer, get_booking, update_booking). For update_booking, if booking_id is not provided, all bookings for this customer will be updated." },
+                booking_details: { type: "object", description: "Details for creating a booking" },
+                update_data: { type: "object", description: "Fields to update in a booking. If using customer_name, all bookings for that customer may be updated." },
+                limit: { type: "integer", description: "Limit for list_bookings or find_bookings_by_customer" }
               },
-              required: ["query"],
-            }),
-          },
-        },
+              required: ["operation"]
+            })
+          }
+        }
       }
     ]
     };
