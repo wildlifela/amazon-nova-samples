@@ -93,6 +93,11 @@ cd nova-s2s-workshop
     export KB_ID='YOUR_KNOWLEDGE_BASES_ID'
     ```
 
+    To use the [AWS Location MCP server](https://github.com/awslabs/mcp?tab=readme-ov-file#aws-location-service-mcp-server), set up an AWS profile with the necessary permissions for Location Services.
+    ```bash
+    export AWS_PROFILE='YOUR_AWS_PROFILE'
+    ``` 
+
 4. Start the python websocket server
     ```bash
     python server.py
