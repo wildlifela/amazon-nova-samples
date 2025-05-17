@@ -2,6 +2,7 @@
 
 This repository contains hands-on labs for exploring how OctankFashion, a leading fashion company, can leverage AI image and video generation to streamline their design and marketing processes. The workshop utilizes the capabilities of the **Nova Canvas** and **Nova Reel** models to tackle various use cases in the fashion industry.
 
+You can find the latest version of these Jupyter notebooks in the [amazon-nova-samples repository on GitHub](https://github.com/aws-samples/amazon-nova-samples/).
 
 ## Overview
 
@@ -42,4 +43,3 @@ The workshop is divided into several hands-on labs, each focusing on a specific 
 - [Amazon Nova Foundation Models](https://aws.amazon.com/ai/generative-ai/nova/)
 - [Amazon Nova User Guide](https://docs.aws.amazon.com/nova/latest/userguide/what-is-nova.html)
 - [Nova Canvas & Reel Prompting Guides](https://docs.aws.amazon.com/nova/latest/userguide/prompting-creation.html)
-
