@@ -8,7 +8,6 @@ import boto3
 def save_invocation_info(invocation_result, model_input):
     invocation_arn = invocation_result["invocationArn"]
 
-    # Create the Bedrock Runtime client.
     bedrock_runtime = boto3.client("bedrock-runtime")
     invocation_job = bedrock_runtime.get_async_invoke(invocationArn=invocation_arn)
 
@@ -16,7 +15,6 @@ def save_invocation_info(invocation_result, model_input):
 
     output_folder = os.path.abspath(f"output/{folder_name}")
 
-    # Created the folder.
     os.makedirs(output_folder, exist_ok=True)
 
     # Save invocation_result as JSON file.
@@ -62,7 +60,6 @@ def download_video_for_invocation_arn(invocation_arn, bucket_name, destination_f
 
     # Create the local file path
     file_name = f"{invocation_id}.mp4"
-    import os
 
     output_folder = os.path.abspath(destination_folder)
     local_file_path = os.path.join(output_folder, file_name)
@@ -70,10 +67,7 @@ def download_video_for_invocation_arn(invocation_arn, bucket_name, destination_f
     # Ensure the output folder exists
     os.makedirs(output_folder, exist_ok=True)
 
-    # Create an S3 client
     s3 = boto3.client("s3")
-
-    # List objects in the specified folder
     response = s3.list_objects_v2(Bucket=bucket_name, Prefix=invocation_id)
 
     # Find the first MP4 file and download it.
@@ -104,7 +98,6 @@ def elapsed_time_for_invocation_job(invocation_job):
     return elapsed_time
 
 
-    # Create the Bedrock Runtime client.
 def monitor_and_download_videos(output_folder="output", submit_time_after=None) -> list[str]:
     bedrock_runtime = boto3.client("bedrock-runtime")
 
@@ -180,24 +173,10 @@ def monitor_and_download_in_progress_videos(output_folder="output") -> list[str]
 
 
 def elapsed_time_for_invocation_arn(invocation_arn):
-    # Create the Bedrock Runtime client.
     bedrock_runtime = boto3.client("bedrock-runtime")
-
-    # Get the job details.
     invocation_job = bedrock_runtime.get_async_invoke(invocationArn=invocation_arn)
 
     return elapsed_time_for_invocation_job(invocation_job)
-
-
-def elapsed_time_for_invocation_job(invocation_job):
-    invocation_start_time = invocation_job["submitTime"].timestamp()
-    if "endTime" in invocation_job:
-        invocation_end_time = invocation_job["endTime"].timestamp()
-        elapsed_time = int(invocation_end_time - invocation_start_time)
-    else:
-        elapsed_time = int(time.time() - invocation_start_time)
-
-    return elapsed_time
 
 
 def get_job_id_from_arn(invocation_arn):
