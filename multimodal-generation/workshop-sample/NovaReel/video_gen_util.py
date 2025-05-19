@@ -8,7 +8,6 @@ import boto3
 def save_invocation_info(invocation_result, model_input):
     invocation_arn = invocation_result["invocationArn"]
 
-    # Create the Bedrock Runtime client.
     bedrock_runtime = boto3.client("bedrock-runtime")
     invocation_job = bedrock_runtime.get_async_invoke(invocationArn=invocation_arn)
 
@@ -16,7 +15,6 @@ def save_invocation_info(invocation_result, model_input):
 
     output_folder = os.path.abspath(f"output/{folder_name}")
 
-    # Created the folder.
     os.makedirs(output_folder, exist_ok=True)
 
     # Save invocation_result as JSON file.
@@ -54,7 +52,7 @@ def is_video_downloaded_for_invocation_job(invocation_job, output_folder="output
     return os.path.exists(local_file_path)
 
 
-def download_video_for_invocation_arn(invocation_arn, bucket_name, destination_folder):
+def download_video_for_invocation_arn(invocation_arn, bucket_name, destination_folder) -> str | None:
     """
     This function downloads the video file for the given invocation ARN.
     """
@@ -62,7 +60,6 @@ def download_video_for_invocation_arn(invocation_arn, bucket_name, destination_f
 
     # Create the local file path
     file_name = f"{invocation_id}.mp4"
-    import os
 
     output_folder = os.path.abspath(destination_folder)
     local_file_path = os.path.join(output_folder, file_name)
@@ -70,10 +67,7 @@ def download_video_for_invocation_arn(invocation_arn, bucket_name, destination_f
     # Ensure the output folder exists
     os.makedirs(output_folder, exist_ok=True)
 
-    # Create an S3 client
     s3 = boto3.client("s3")
-
-    # List objects in the specified folder
     response = s3.list_objects_v2(Bucket=bucket_name, Prefix=invocation_id)
 
     # Find the first MP4 file and download it.
@@ -87,6 +81,7 @@ def download_video_for_invocation_arn(invocation_arn, bucket_name, destination_f
 
     # If we reach this point, no MP4 file was found.
     print(f"Problem: No MP4 file was found in S3 at {bucket_name}/{invocation_id}")
+    return None
 
 
 def elapsed_time_for_invocation_job(invocation_job):
@@ -103,8 +98,7 @@ def elapsed_time_for_invocation_job(invocation_job):
     return elapsed_time
 
 
-def monitor_and_download_videos(output_folder="output", submit_time_after=None):
-    # Create the Bedrock Runtime client.
+def monitor_and_download_videos(output_folder="output", submit_time_after=None) -> list[str]:
     bedrock_runtime = boto3.client("bedrock-runtime")
 
     # Save failed jobs.
@@ -124,22 +118,28 @@ def monitor_and_download_videos(output_folder="output", submit_time_after=None):
 
     completed_jobs = bedrock_runtime.list_async_invokes(**completed_jobs_args)
 
+    local_file_paths = []
     for job in completed_jobs["asyncInvokeSummaries"]:
-        save_completed_job(job)
+        new_path = save_completed_job(job)
+        if new_path:
+            local_file_paths.append(new_path)
 
-    monitor_and_download_in_progress_videos(output_folder=output_folder)
+    new_paths = monitor_and_download_in_progress_videos(output_folder=output_folder)
+    local_file_paths.extend(new_paths)
+
+    return local_file_paths
 
 
-def monitor_and_download_in_progress_videos(output_folder="output"):
-    # Create the Bedrock Runtime client.
+def monitor_and_download_in_progress_videos(output_folder="output") -> list[str]:
     bedrock_runtime = boto3.client("bedrock-runtime")
-
     invocation_list = bedrock_runtime.list_async_invokes(statusEquals="InProgress")
     in_progress_jobs = invocation_list["asyncInvokeSummaries"]
 
     pending_job_arns = [job["invocationArn"] for job in in_progress_jobs]
 
     print(f'Monitoring {len(pending_job_arns)} "InProgress" jobs.')
+
+    local_file_paths = []
 
     while len(pending_job_arns) > 0:
         job_arns_to_remove = []
@@ -149,7 +149,9 @@ def monitor_and_download_in_progress_videos(output_folder="output"):
             status = job_update["status"]
 
             if status == "Completed":
-                save_completed_job(job_update, output_folder=output_folder)
+                new_path = save_completed_job(job_update, output_folder=output_folder)
+                if new_path:
+                    local_file_paths.append(new_path)
                 job_arns_to_remove.append(job_arn)
             elif status == "Failed":
                 save_failed_job(job_update, output_folder=output_folder)
@@ -167,34 +169,21 @@ def monitor_and_download_in_progress_videos(output_folder="output"):
         time.sleep(10)
 
     print("Monitoring and download complete!")
+    return local_file_paths
 
 
 def elapsed_time_for_invocation_arn(invocation_arn):
-    # Create the Bedrock Runtime client.
     bedrock_runtime = boto3.client("bedrock-runtime")
-
-    # Get the job details.
     invocation_job = bedrock_runtime.get_async_invoke(invocationArn=invocation_arn)
 
     return elapsed_time_for_invocation_job(invocation_job)
-
-
-def elapsed_time_for_invocation_job(invocation_job):
-    invocation_start_time = invocation_job["submitTime"].timestamp()
-    if "endTime" in invocation_job:
-        invocation_end_time = invocation_job["endTime"].timestamp()
-        elapsed_time = int(invocation_end_time - invocation_start_time)
-    else:
-        elapsed_time = int(time.time() - invocation_start_time)
-
-    return elapsed_time
 
 
 def get_job_id_from_arn(invocation_arn):
     return invocation_arn.split("/")[-1]
 
 
-def save_completed_job(job, output_folder="output"):
+def save_completed_job(job, output_folder="output") -> str | None:
     job_id = get_job_id_from_arn(job["invocationArn"])
 
     output_folder_abs = os.path.abspath(
@@ -208,7 +197,7 @@ def save_completed_job(job, output_folder="output"):
 
     if is_video_downloaded_for_invocation_job(job, output_folder=output_folder):
         print(f"Skipping completed job {job_id}, video already downloaded.")
-        return
+        return None
 
     s3_bucket_name = (
         job["outputDataConfig"]["s3OutputDataConfig"]["s3Uri"]
@@ -216,13 +205,15 @@ def save_completed_job(job, output_folder="output"):
         .split("/")[0]
     )
 
-    download_video_for_invocation_arn(
+    local_file_path = download_video_for_invocation_arn(
         job["invocationArn"], s3_bucket_name, output_folder_abs
     )
 
     # Write the status file to disk as JSON.
     with open(status_file, "w") as f:
         json.dump(job, f, indent=2, default=str)
+
+    return local_file_path
 
 
 def save_failed_job(job, output_folder="output"):
