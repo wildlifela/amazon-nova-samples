@@ -20,6 +20,8 @@ nova-s2s-workshop/
 │   ├── s2s_session_manager.py                  # Nova Sonic bidirectional streaming logic incapsulated
 │   ├── s2s_events.py                           # Utlility class construct Nova Sonic events
 │   ├── bedrock_knowledge_bases.py              # Sample Bedrock Knowledge Bases implementation
+│   ├── strands_agent.py                        # Sample Strands Agent implementation
+│   ├── mcp_client.py                           # Sample MCP implementation
 │   └── requirements.txt                        # Python dependencies
 └── react-client/                               # Web client implementation
     ├── src/
@@ -93,11 +95,6 @@ cd nova-s2s-workshop
     export KB_ID='YOUR_KNOWLEDGE_BASES_ID'
     ```
 
-    To use the [AWS Location MCP server](https://github.com/awslabs/mcp?tab=readme-ov-file#aws-location-service-mcp-server), set up an AWS profile with the necessary permissions for Location Services.
-    ```bash
-    export AWS_PROFILE='YOUR_AWS_PROFILE'
-    ``` 
-
 4. Start the python websocket server
     ```bash
     python server.py
@@ -130,3 +127,31 @@ cd nova-s2s-workshop
     ```
 
 > Known issue: This UI is intended for demonstration purposes and may encounter state management issues after frequent conversation start/stop actions. Refreshing the page can help resolve the issue.
+
+
+### Agentic workflow integration
+The workshop app includes both [MCP](https://modelcontextprotocol.io/introduction) (Model Context Protocol) and [Strands Agent](https://community.aws/content/2xCUnoqntk2PnWDwyb9JJvMjxKA/step-by-step-guide-setting-up-a-strands-agent-with-aws-bedrock) integrations to demonstrate how Nova Sonic can be integrated with popular agentic workflow frameworks to support complex scenarios.
+Both the MCP and Strands Agent samples connect to [AWS Location MCP server](https://github.com/awslabs/mcp?tab=readme-ov-file#aws-location-service-mcp-server) to retrieve location-related information. 
+The MCP sample illustrates a basic pattern of directly invoking a tool, while the Strands Agent sample showcases a more advanced integration where an agent orchestrates the use of the Location Service and a sample Weather Tool, including reasoning steps.
+The following additional setup is required to try out these two features.
+
+- Install uv from [Astral](https://docs.astral.sh/uv/getting-started/installation/)
+
+- Set up an AWS profile with the necessary permissions for Location Services. 
+```bash
+export AWS_PROFILE='YOUR_AWS_PROFILE'
+``` 
+
+- Start the python server with MCP:
+```bash
+python server.py --agent mcp
+```
+
+OR
+
+- Start the python server with Strands Agent:
+```bash
+python server.py --agent strands
+```
+
+You can refer to the [Amazon Nova Sonic Workshop](https://catalog.workshops.aws/amazon-nova-sonic-s2s/en-US) for a detailed walkthrough and insights into the core functionalities of Nova Sonic.

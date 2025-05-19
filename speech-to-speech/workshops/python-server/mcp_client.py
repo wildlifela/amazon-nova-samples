@@ -17,9 +17,7 @@ class McpLocationClient:
 
     async def connect_to_server(self):
         aws_profile = os.getenv("AWS_PROFILE")
-        env = {
-                    "FASTMCP_LOG_LEVEL": "ERROR"
-                }
+        env = {"FASTMCP_LOG_LEVEL": "ERROR"}
         if aws_profile:
             env["AWS_PROFILE"] = aws_profile
             
@@ -59,6 +57,7 @@ class McpLocationClient:
         if isinstance(input, str):
             input = json.loads(input)
         tool_name = "search_places"
+        print(">>>",tool_name,input)
 
         response = await self.session.call_tool(tool_name, input)
         result = []

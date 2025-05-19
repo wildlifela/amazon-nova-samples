@@ -26,7 +26,7 @@ def debug_print(message):
 class S2sSessionManager:
     """Manages bidirectional streaming with AWS Bedrock using asyncio"""
     
-    def __init__(self, model_id='amazon.nova-sonic-v1:0', region='us-east-1', mcp_client=None):
+    def __init__(self, model_id='amazon.nova-sonic-v1:0', region='us-east-1', mcp_client=None, strands_agent=None):
         """Initialize the stream manager."""
         self.model_id = model_id
         self.region = region
@@ -48,6 +48,7 @@ class S2sSessionManager:
         self.toolUseId = ""
         self.toolName = ""
         self.mcp_loc_client = mcp_client
+        self.strands_agent = strands_agent
 
     def _initialize_client(self):
         """Initialize the Bedrock client."""
@@ -185,7 +186,7 @@ class S2sSessionManager:
                             prompt_name = json_data['event']['contentEnd'].get("promptName")
                             debug_print("Processing tool use and sending result")
                             toolResult = await self.processToolUse(self.toolName, self.toolUseContent)
-                            
+                                
                             # Send tool start event
                             toolContent = str(uuid.uuid4())
                             tool_start_event = S2sEvent.content_start_tool(prompt_name, toolContent, self.toolUseId)
@@ -231,54 +232,38 @@ class S2sSessionManager:
         """Return the tool result"""
         print(f"Tool Use Content: {toolUseContent}")
 
-        content = None
-        if toolUseContent.get("content"):
-            # Parse the JSON string in the content field
-            query_json = json.loads(toolUseContent.get("content"))
-            content = toolUseContent.get("content")  # Pass the JSON string directly to the agent
-            print(f"Extracted query: {content}")
-        
-        # Handle built-in tools directly
-        if toolName == "getKbTool":
-            if not content:
-                content = "amazon community policy"
-            results = kb.retrieve_kb(content)
-            return {"result": results}
+        toolName = toolName.lower()
+        content, result = None, None
+        try:
+            if toolUseContent.get("content"):
+                # Parse the JSON string in the content field
+                query_json = json.loads(toolUseContent.get("content"))
+                content = toolUseContent.get("content")  # Pass the JSON string directly to the agent
+                print(f"Extracted query: {content}")
             
-        if toolName == "getDateTool":
-            from datetime import datetime, timezone
-            return {"result": datetime.now(timezone.utc).strftime('%A, %Y-%m-%d %H-%M-%S')}
-                    
-        if toolName == "getBookingDetails":
-            try:
-                if toolUseContent.get("content"):
-                    # Pass the tool use content (JSON string) directly to the agent
-                    result = await inline_agent.invoke_agent(toolUseContent.get("content"))
-                    # Try to parse and format if needed
-                    try:
-                        booking_json = json.loads(result)
-                        if "bookings" in booking_json:
-                            formatted = await inline_agent.invoke_agent(
-                                f"Format this booking information for the user: {result}"
-                            )
-                            return {"result": formatted}
-                    except Exception:
-                        pass  # Not JSON, just return as is
-                    return {"result": result}
-                else:
-                    return {"result": "No content provided for booking details"}
-            except json.JSONDecodeError as e:
-                print(f"JSON decode error: {str(e)}")
-                return {"result": f"Invalid JSON format for booking details: {str(e)}"}
-            except Exception as e:
-                print(f"Error processing booking details: {str(e)}")
-                return {"result": f"Error processing booking details: {str(e)}"}
-        
-        # For all other tools, use the generic tool handler in mcp_tools.py
-        # This includes locationMcpTool and any future MCP tools
-        if self.mcp_loc_client:
-            result = await self.mcp_loc_client.call_tool(content)
-            return {"result": json.dumps(result)}
+            # Handle built-in tools directly
+            if toolName == "getkbtool":
+                if not content:
+                    content = "amazon community policy"
+                result = kb.retrieve_kb(content)
+                
+            if toolName == "getdatetool":
+                from datetime import datetime, timezone
+                result = datetime.now(timezone.utc).strftime('%A, %Y-%m-%d %H-%M-%S')
+                                
+            if toolName == "locationmcptool":
+                if self.mcp_loc_client:
+                    result = await self.mcp_loc_client.call_tool(content)
+                elif self.strands_agent:
+                    result = self.strands_agent.query(content)
+
+            if not result:
+                result = "no result found"
+
+            return {"result": result}
+        except Exception as ex:
+            print(ex)
+            return {"result": "An error occurred while attempting to retrieve information related to the toolUse event."}
     
     async def close(self):
         """Close the stream properly."""
@@ -297,5 +282,3 @@ class S2sSessionManager:
             except asyncio.CancelledError:
                 pass
         
-        # Clean up InlineAgent
-        await inline_agent.cleanup_agent()
