@@ -2,7 +2,7 @@
   "name": "@amazon/nova-s2s-typescript-example",
   "version": "1.0.0",
   "description": "",
-  "type": "commonjs",
+  "type": "module",
   "scripts": {
     "build": "tsc",
     "start": "node dist/server.js",
@@ -30,6 +30,7 @@
     "uuid": "^11.1.0"
   },
   "devDependencies": {
-    "tsx": "^4.19.3"
+    "tsx": "^4.19.3",
+    "typescript": "^5.8.3"
   }
 }

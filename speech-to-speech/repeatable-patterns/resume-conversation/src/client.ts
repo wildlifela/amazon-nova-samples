@@ -11,7 +11,7 @@ import {
 import { Provider } from "@smithy/types";
 import { Buffer } from "node:buffer";
 import { randomUUID } from "node:crypto";
-import { InferenceConfig } from "./types";
+import { InferenceConfig } from "./types.js";
 import { Subject } from 'rxjs';
 import { take } from 'rxjs/operators';
 import { firstValueFrom } from 'rxjs';
@@ -22,8 +22,8 @@ import {
   DefaultSystemPrompt,
   DefaultTextConfiguration,
   GetReservationToolSchema,
-} from "./consts";
-import { handleToolCall } from "./hotel-confirmation";
+} from "./consts.js";
+import { handleToolCall } from "./hotel-confirmation.js";
 
 export interface NovaSonicBidirectionalStreamClientConfig {
   requestHandlerConfig?:

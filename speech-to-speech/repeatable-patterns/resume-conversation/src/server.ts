@@ -3,11 +3,13 @@ import http from 'http';
 import path from 'path';
 import { Server } from 'socket.io';
 import { fromIni } from "@aws-sdk/credential-providers";
-import { NovaSonicBidirectionalStreamClient } from './client';
+import { NovaSonicBidirectionalStreamClient } from './client.js';
 import { Buffer } from 'node:buffer';
-
+import { fileURLToPath } from 'url';
+const __filename = fileURLToPath(import.meta.url); // get the resolved path to the file
+const __dirname = path.dirname(__filename);
 // Configure AWS credentials
-const AWS_PROFILE_NAME = process.env.AWS_PROFILE || 'bedrock-test';
+const AWS_PROFILE_NAME = process.env.AWS_PROFILE || 'aws';
 
 // Create Express app and HTTP server
 const app = express();
